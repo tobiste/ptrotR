@@ -7,7 +7,7 @@ Author:
     comment = c(ORCID = "0000-0002-9290-014X"))
 Maintainer: Tobias Stephan <tobias.stephan1@yahoo.com>
 Description: This package is a free and open-source R package for analysing 
-    plate motion or reconstructing plate motion.
+    and reconstructing plate motion.
 License: GPL (>= 3)
 URL: https://tobiasstephan1.wixsite.com/tobi
 Imports: 
