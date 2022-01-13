@@ -38,7 +38,7 @@ read.gplates <- function(x, ...) {
 #' @param a2 rotation matrix of finite rotation 2
 #' @return list
 #' @details x must ba all equivalent total rotations.
-#' @references <div class="csl-entry">Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. <i>Computers and Geosciences</i>, <i>25</i>(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5</div>
+#' @references Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
 #' @export
 #' @seealso \code{\link{extract_stage_rotations}}
 extract_stage_rotation <- function(a1, a2) {
@@ -55,7 +55,7 @@ extract_stage_rotation <- function(a1, a2) {
 #' @param plate ID of plate
 #' @return object of class \code{"stage"}. Sequence of stage rotations
 #' @details x must ba all equivalent total rotations.
-#' @references <div class="csl-entry">Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. <i>Computers and Geosciences</i>, <i>25</i>(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5</div>
+#' @references Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
 #' @export
 #' @seealso \code{\link{extract_stage_rotation}}
 #' @examples
@@ -207,7 +207,7 @@ interpolate_missing_finite_poles <- function(df) {
               lon = 0,
               angle = 0,
               plate.fix = unique(fixed$plate.fix),
-              cmt = 'present-day'
+              cmt = 'added_present-day'
             )
           )
           df <- unique(plyr::rbind.fill(df, missing.rot)) # add new rotation to rot file
@@ -299,7 +299,7 @@ interpolate_missing_finite_poles <- function(df) {
 #' Must be in between \code{rot1$age} and \code{rot2$age}
 #' @return object of class \code{"finite"}. Sequence of total
 #' reconstruction rotations with filled gaps
-#' @references <div class="csl-entry">Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. <i>Computers and Geosciences</i>, <i>25</i>(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5</div>
+#' @references Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
 #' @export
 #' @importFrom dplyr between
 finite_pole_interpolation <- function(rot1, rot2, tx) {

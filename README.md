@@ -23,3 +23,5 @@ Tobias Stephan
 
 ## Useful references
 <div class="csl-entry">Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. <i>Computers and Geosciences</i>, <i>25</i>(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5</div>
+
+<div class="csl-entry">Schaeben, H., Kroner, U., &#38; Stephan, T. (2021). Euler Poles of Tectonic Plates. In B. S. Daza Sagar, Q. Cheng, J. McKinley, &#38; F. Agterberg (Eds.), <i>Encyclopedia of Mathematical Geosciences. Encyclopedia of Earth Sciences Series</i> (pp. 1–7). Springer Nature Switzerland AG 2021. https://doi.org/10.1007/978-3-030-26050-7_435-1</div>
