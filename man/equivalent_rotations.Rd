@@ -18,3 +18,7 @@ sequence of plate rotations. Same object class as x
 Transform a sequence of rotations with different reference
 systems into one with a common reference system
 }
+\examples{
+data(pangea)
+equivalent_rotations(pangea, fixed=103)
+}
