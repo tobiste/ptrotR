@@ -16,7 +16,11 @@
 #' **white space**. Use "_" to separate words instead.
 #' @importFrom utils read.table
 #' @export
-read_gplates <- function(x, ...) {
+#' @examples
+#' fname <- system.file("Pangea.rot", package="PlateTectonicMotionR")
+#' Pangea <- read.gplates(fname)
+#' print(Pangea)
+read.gplates <- function(x, ...) {
   data <- utils::read.table(file = x, header = FALSE, sep = "", dec = ".")
   colnames(data) <- c(
     "plate.rot", "age", "lat", "lon", "angle", "plate.fix",
@@ -36,6 +40,7 @@ read_gplates <- function(x, ...) {
 #' @details x must ba all equivalent total rotations.
 #' @references <div class="csl-entry">Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. <i>Computers and Geosciences</i>, <i>25</i>(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5</div>
 #' @export
+#' @seealso \code{\link{extract_stage_rotations}}
 extract_stage_rotation <- function(a1, a2) {
   a12 <- euler_from_rot(a1 %*% solve(a2))
   return(a12)
@@ -47,11 +52,15 @@ extract_stage_rotation <- function(a1, a2) {
 #' reconstruction rotations
 #' @param x object of class \code{"finite"}. Sequence of total
 #' reconstruction rotations
-#' @param plate ???
+#' @param plate ID of plate
 #' @return object of class \code{"stage"}. Sequence of stage rotations
 #' @details x must ba all equivalent total rotations.
 #' @references <div class="csl-entry">Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. <i>Computers and Geosciences</i>, <i>25</i>(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5</div>
 #' @export
+#' @seealso \code{\link{extract_stage_rotation}}
+#' @examples
+#' data(pangea)
+#' extract_stage_rotations(pangea, plate=103)
 extract_stage_rotations <- function(x, plate) {
   data <- subset(x, x$plate.rot == plate)
   age.list <- unique(data$age)
@@ -161,8 +170,12 @@ find_missing_rotations <- function(x) {
 #' reconstruction rotations with filled gaps
 #' @importFrom plyr rbind.fill
 #' @export
+#' #' @examples
+#' data(pangea)
+#' interpolate_missing_finite_poles(pangea)
 interpolate_missing_finite_poles <- function(df) {
   missing.df <- find_missing_rotations(df)
+  missing.df <- missing.df[order(missing.df$plate.rot, missing.df$age),]
 
   missing.rot <- data.frame(
     plate.rot = as.character(),
@@ -173,6 +186,9 @@ interpolate_missing_finite_poles <- function(df) {
     plate.fix = as.character(),
     cmt = as.character()
   )
+
+  df <- df[order(df$plate.rot, df$age),]
+
   for (id in unique(missing.df$plate.rot)) {
     x <- subset(missing.df, missing.df$plate.rot == id)
 
@@ -180,70 +196,97 @@ interpolate_missing_finite_poles <- function(df) {
       if (x$missing[i]) {
         missing.age <- x$age[i]
 
-        older.age <- subset(x, x@age > missing.age & isFALSE(x$missing))
-        # x %>% dplyr::filter(age > missing.age & missing == F)
-        older.age <- min(older.age$age)
-
-        if (older.age != Inf) {
-          younger.age <- subset(x, x@age < missing.age & isFALSE(x$missing))
-          # younger.age <- x %>% dplyr::filter(age < missing.age & missing == F)
-          younger.age <- max(younger.age$age)
-
+        if(missing.age==0){
           fixed <- subset(df, df$plate.rot == id)
-          # df %>% filter(plate.rot==id)
-          fixed <- unique(fixed$plate.fix)
+          missing.rot <- rbind(
+            missing.rot,
+            data.frame(
+              plate.rot = id,
+              age = missing.age,
+              lat = 90,
+              lon = 0,
+              angle = 0,
+              plate.fix = unique(fixed$plate.fix),
+              cmt = 'present-day'
+            )
+          )
+          df <- unique(plyr::rbind.fill(df, missing.rot)) # add new rotation to rot file
+          x$missing[i] <- FALSE # add tell that the rotation is not missing anymore
 
-          # df.young <- df %>% dplyr::filter(plate.rot==id, age == younger.age)
-          # df.old <- df %>% dplyr::filter(plate.rot==id, age == older.age)
-          df.young <- subset(df, df$plate.rot == id & df$age == younger.age)
-          df.old <- subset(df, df$plate.rot == id & df$age == older.age)
+        } else {
+          older.age <- subset(x, x$age > missing.age & !x$missing)
+          # x %>% dplyr::filter(age > missing.age & missing == F)
+          suppressWarnings({
+            older.age <- min(older.age$age)
+          })
 
-          if (df.young$lat == df.old$lat & df.young$lon == df.old$lon & df.young$angle == df.old$angle) {
-            missing.rot <- rbind(
-              missing.rot,
-              data.frame(
-                plate.rot = id,
-                age = missing.age,
-                lat = df.young$lat,
-                lon = df.young$lon,
-                angle = df.young$angle,
-                plate.fix = fixed,
-                cmt = paste0(
-                  "inteprolated between_", older.age, "_Ma_and_",
-                  younger.age, "_Ma"
+
+          if (!is.infinite(older.age)) {
+            younger.age <- subset(x, x$age < missing.age & !x$missing)
+            # younger.age <- x %>% dplyr::filter(age < missing.age & missing == F)
+            younger.age <- max(younger.age$age)
+
+            fixed <- subset(df, df$plate.rot == id)
+            fixed <- unique(fixed$plate.fix)
+
+            # df.young <- df %>% dplyr::filter(plate.rot==id, age == younger.age)
+            # df.old <- df %>% dplyr::filter(plate.rot==id, age == older.age)
+            df.young <- subset(df, df$plate.rot == id & df$age == younger.age)
+            df.old <- subset(df, df$plate.rot == id & df$age == older.age)
+
+            if (df.young$lat == df.old$lat & df.young$lon == df.old$lon & df.young$angle == df.old$angle) {
+              missing.rot <- rbind(
+                missing.rot,
+                data.frame(
+                  plate.rot = id,
+                  age = missing.age,
+                  lat = df.young$lat,
+                  lon = df.young$lon,
+                  angle = df.young$angle,
+                  plate.fix = fixed,
+                  cmt = paste0(
+                    "inteprolated_between_", older.age, "_Ma_and_",
+                    younger.age, "_Ma"
+                  )
                 )
               )
-            )
-          } else {
-            z <- finite_pole_interpolation(
-              df.young,
-              df.old,
-              missing.age
-            )
+            df <- unique(plyr::rbind.fill(df, missing.rot)) # add new rotation to rot file
+            x$missing[i] <- FALSE # add tell that the rotation is not missing anymore
 
-            missing.rot <- rbind(
-              missing.rot,
-              data.frame(
-                plate.rot = id,
-                age = missing.age,
-                lat = z$euler.pole$lat,
-                lon = z$euler.pole$lon,
-                angle = z$psi,
-                plate.fix = fixed,
-                cmt = paste0(
-                  "inteprolated between_", older.age, "_Ma_and_",
-                  younger.age, "_Ma"
+
+            } else {
+              z <- finite_pole_interpolation(
+                df.young,
+                df.old,
+                missing.age
+              )
+
+              missing.rot <- rbind(
+                missing.rot,
+                data.frame(
+                  plate.rot = id,
+                  age = missing.age,
+                  lat = z$pole$lat,
+                  lon = z$pole$lon,
+                  angle = z$psi,
+                  plate.fix = fixed,
+                  cmt = paste0(
+                    "inteprolated_between_", older.age, "_Ma_and_",
+                    younger.age, "_Ma"
+                  )
                 )
               )
-            )
+              df <- unique(plyr::rbind.fill(df, missing.rot)) # add new rotation to rot file
+              x$missing[i] <- FALSE # add tell that the rotation is not missing anymore
+
+            }
           }
-          rm(missing.age, younger.age, older.age, z)
         }
-      }
+       }
     }
   }
 
-  return(plyr::rbind.fill(df, missing.rot))
+  return(df)
 }
 
 
@@ -261,7 +304,7 @@ interpolate_missing_finite_poles <- function(df) {
 #' @importFrom dplyr between
 finite_pole_interpolation <- function(rot1, rot2, tx) {
   if (rot1$plate.fix != rot2$plate.fix) {
-    stop("Anchore/fixed plate of both total reconstruction rotations must be identical")
+    stop("Anchored/fixed plate of both total reconstruction rotations must be identical")
   }
 
   if (rot1$age == rot2$age) {
@@ -314,6 +357,9 @@ finite_pole_interpolation <- function(rot1, rot2, tx) {
 #' @return sequence of plate rotations in new reference system. Same object class as x
 #' @export
 equivalent_rotation <- function(x, fixed) {
+  if(!(fixed %in% x$plate.rot)){
+    stop("'fixed' has to be one out of x$plate.rot")
+  }
   lat.eq <- c()
   lon.eq <- c()
   angle.eq <- c()
@@ -369,12 +415,15 @@ equivalent_rotation <- function(x, fixed) {
 #' @return sequence of plate rotations. Same object class as x
 #' @importFrom dplyr %>% mutate
 #' @export
+#' @examples
+#' data(pangea)
+#' equivalent_rotations(pangea, fixed=103)
 equivalent_rotations <- function(x, fixed) {
   x.compl <- interpolate_missing_finite_poles(x)
-  x.eq <- x[0, ]
+  x.eq <- x[0, ] # create blank
 
-  v <- unique(x.compl$age)
-  v <- v[v != 0]
+  v <- unique(x.compl$age) # list of all ages
+  v <- v[v != 0] # exclude age = 0
   for (i in v) {
     x.age <- subset(x.compl, x.compl$age == i)
     if (nrow(x.age) > 1) {
