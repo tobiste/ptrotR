@@ -10,6 +10,9 @@
 #'   \item{lon}{Longitude}
 #'   \item{angle}{Rotation angle in degree}
 #'   \item{plate.fix}{ID of fixed/anchored plate}
+setClass('finite', representation(plate.rot='numeric', age='numeric', lat='numeric', lon='numeric', angle='numeric', plate.fix='numeric',
+         cmt='character'))
+
 #'   \item{cmt}{Comments}
 #' }
 #' @details The comment column (last column) must not include
