@@ -19,3 +19,6 @@ list
 \description{
 Extracts the Euler pole and angle from a Euler matrix
 }
+\examples{
+
+}
