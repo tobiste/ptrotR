@@ -195,9 +195,64 @@ rotation_axis <- function(A) {
 #' \item{psi}{Euler angle in degree}
 #' }
 #' @export
+#' @examples
+#'
 euler_from_rot <- function(A) {
   psi <- rotation_angle(A)
   ra <- rotation_axis(A)
   ep <- euler_pole(ra[1], ra[2], ra[3], geo = FALSE)
   return(list(pole = ep, psi = psi))
+}
+
+
+
+#' @title Orthodromic distance
+#' @description The great-circle distance or orthodromic distance is the
+#' shortest distance between two points on the surface of a sphere,
+#' measured along the surface of the sphere (as opposed to a straight line
+#' through the sphere's interior)
+#' @param a lat, lon coordinate of point 1
+#' @param b lat, lon coordinate of point 2
+#' @return distance in degree
+#' @export
+#' @examples
+#' berlin <- c(52.517, 13.4)
+#' tokyo <- c(35.7, 139.767)
+#' orthodrome(berlin, tokyo)
+orthodrome <- function(a, b){
+  delta <- pracma::acosd(
+    pracma::sind(a[1]) * pracma::sind(b[1]) +
+      pracma::cosd(a[1]) * pracma::cosd(b[1]) * pracma::cosd(b[2]-a[2])
+  )
+  return(delta)
+}
+
+#' @title Great-circle distance distance
+#' @description Distance along a great circle.
+#' @param a lat, lon coordinates of point 1
+#' @param b lat, lon coordinates of point 2
+#' @return distance in degree
+#' @export
+#' @seealso \code{\link{orthodrome}}
+#' @examples
+#' berlin <- c(52.517, 13.4)
+#' tokyo <- c(35.7, 139.767)
+#' orthodrome(berlin, tokyo)
+greatcircle_distance <- function(a, b){
+  if(is.null(dim(a)) == T & is.null(dim(b))){  # a and b are vectors with one latitude/longitude
+    delta <- orthodrome(a, b)
+  }
+  if(!is.null(dim(a)) == T & !is.null(dim(b))) { #a and b are data.frames or vectors with more latitude/longitude
+    delta <- c()
+    for (i in 1:nrow(a)) {
+      delta[i] <- orthodrome(c(a$lat[i], a$lon[i]), c(b$lat[i], b$lon[i]))
+    }
+  }
+  if(!is.null(dim(a)) == T & is.null(dim(b))) { #a is data.frames or vectors with more latitude/longitude and b is a vectors with one latitude/longitude
+    delta <- c()
+    for (i in 1:nrow(a)) {
+      delta[i] <- orthodrome(c(a$lat[i], a$lon[i]), b)
+    }
+  }
+  return(delta)
 }
