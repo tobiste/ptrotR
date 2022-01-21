@@ -184,8 +184,8 @@ extract_stage_rotations <- function(x, plate) {
       "angle" = ep.i$psi,
       "max.age" = age.list[time],
       "min.age" = age.list[time - 1],
-      "plate.rot" = data$plate[1],
-      "plate.fix" = data$fixed[1]
+      "plate.rot" = data$plate.rot[1],
+      "plate.fix" = data$plate.fix[1]
     )
 
     if (time == 2) {
