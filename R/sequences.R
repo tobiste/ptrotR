@@ -13,19 +13,19 @@
 #' @return object of class \code{"finite"}
 #' @export
 as.finite <- function(x){
-  if(!(plate.fix %in% colnames(x))){
+  if(!('plate.fix' %in% colnames(x))){
     stop("column 'plate.fix'is missing")
   }
-  if(!(plate.rot %in% colnames(x))){
+  if(!('plate.rot' %in% colnames(x))){
     stop("column 'plate.rot' is missing")
   }
-  if(!(angle %in% colnames(x))){
+  if(!('angle' %in% colnames(x))){
     stop("column 'angle' is missing")
   }
-  if(!(lat %in% colnames(x))){
+  if(!('lat' %in% colnames(x))){
     stop("column 'lat' is missing")
   }
-  if(!(lon %in% colnames(x))){
+  if(!('lon' %in% colnames(x))){
     stop("column 'lon' is missing")
   }
 
@@ -53,19 +53,19 @@ as.finite <- function(x){
 #' @return object of class \code{"stage"}
 #' @export
 as.stage <- function(x){
-  if(!(plate.fix %in% colnames(x))){
+  if(!('plate.fix' %in% colnames(x))){
     stop("column 'plate.fix'is missing")
   }
-  if(!(plate.rot %in% colnames(x))){
+  if(!('plate.rot' %in% colnames(x))){
     stop("column 'plate.rot' is missing")
   }
-  if(!(angle %in% colnames(x))){
+  if(!('angle' %in% colnames(x))){
     stop("column 'angle' is missing")
   }
-  if(!(lat %in% colnames(x))){
+  if(!('lat' %in% colnames(x))){
     stop("column 'lat' is missing")
   }
-  if(!(lon %in% colnames(x))){
+  if(!('lon' %in% colnames(x))){
     stop("column 'lon' is missing")
   }
 
