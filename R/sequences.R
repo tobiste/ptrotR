@@ -29,11 +29,11 @@ as.finite <- function(x){
     stop("column 'lon' is missing")
   }
 
-  class(x) <- ifselse(
-    length(class(x))>=1,
-    class(x)[2] = "finite",
+  if(length(class(x))>=1){
+    class(x)[2] = "finite"
+  } else {
     append(class(x), "finite")
-  )
+  }
 
   return(x)
 }
@@ -69,11 +69,12 @@ as.stage <- function(x){
     stop("column 'lon' is missing")
   }
 
-  class(x) <- ifselse(
-    length(class(x))>=1,
-    class(x)[2] = "stage",
+  if(length(class(x))>=1){
+    class(x)[2] = "stage"
+  } else {
     append(class(x), "stage")
-  )
+  }
+
   return(x)
 }
 
