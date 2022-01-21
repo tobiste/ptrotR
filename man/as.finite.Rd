@@ -10,6 +10,7 @@ as.finite(x)
 \item{x}{data.frame containing columns lat, lon, angle, plate.rot, and plate.fix
 \describe{
   \item{plate.rot}{ID of moving plate}
+  \item{age}{Age for finite rotation}
   \item{lat}{Latitude of Euler pole of total reconstruction rotation}
   \item{lon}{Longitude}
   \item{angle}{Rotation angle in degree}

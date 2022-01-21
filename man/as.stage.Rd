@@ -12,6 +12,8 @@ as.stage(x)
   \item{plate.rot}{ID of moving plate}
   \item{lat}{Latitude of Euler pole of total reconstruction rotation}
   \item{lon}{Longitude}
+  \item{min.age}{End of stage rotation}
+  \item{max.age}{Start of stage rotation}
   \item{angle}{Rotation angle in degree}
   \item{plate.fix}{ID of fixed/anchored plate}
   }}
