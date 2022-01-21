@@ -1,5 +1,5 @@
 # PlateTectonicMotionR
-**PlateTectonicMotionR** This package is a free and open-source **R** package for analysing and reconstructing plate motion.
+**PlateTectonicMotionR** is a free and open-source **R** package for analysing and reconstructing plate motion.
 
 ## Prerequisites
 
