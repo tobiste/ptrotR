@@ -7,7 +7,7 @@
 inverse_rotation(x)
 }
 \arguments{
-\item{x}{object of class \code{"finite"} or \code{'stage'}}
+\item{x}{data.frame containing the sequence of rotations or the rotation}
 }
 \value{
 object of with same class like x
@@ -16,5 +16,5 @@ object of with same class like x
 Changes plate motion (A relative to B) to (B relative to A)
 }
 \seealso{
-\code{\link{"as.finite"}}, \code{\link{"as.stage"}}
+\code{\link{"check.finite"}}, \code{\link{"check.stage"}}
 }

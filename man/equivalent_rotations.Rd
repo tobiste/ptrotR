@@ -7,7 +7,7 @@
 equivalent_rotations(x, fixed)
 }
 \arguments{
-\item{x}{sequence of plate rotations. An object of \code{"finite"} of \code{"stage"}}
+\item{x}{sequence of plate rotations. An object of \code{"data.frame"}, \code{"tibble"}, or \code{"matrix"}}
 
 \item{fixed}{ID of fixed plate. Must be same object class as x}
 }
@@ -23,5 +23,5 @@ data(pangea)
 equivalent_rotations(pangea, fixed=103)
 }
 \seealso{
-\code{\link{'as.finite'}}, \code{\link{'as.stage'}}
+\code{\link{'check.finite'}}, \code{\link{'check.stage'}}
 }

@@ -7,11 +7,11 @@
 find_missing_rotations(x)
 }
 \arguments{
-\item{x}{object of class \code{"finite"}. Sequence of total
+\item{x}{data.frame. Sequence of total
 reconstruction rotations}
 }
 \value{
-object of class \code{"finite"}. Sequence of total reconstruction rotations
+data.frame. Sequence of total reconstruction rotations
 }
 \description{
 Identifies gaps in a sequence of rotations with
@@ -21,5 +21,5 @@ different reference systems
 x must ba all equivalent total rotations.
 }
 \seealso{
-\code{\link{as.finite}}, \code{\link{as.stage}}
+\code{\link{check.finite}}, \code{\link{check.stage}}
 }

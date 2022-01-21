@@ -1,6 +1,6 @@
-#' @title Finite rotation class
+#' @title Finite rotation object
 #'
-#' @description Assign a data.frame to class \code{'finite'}
+#' @description Check if object has columns of a finite rotation sequence
 #'
 #' @param x data.frame containing columns lat, lon, angle, plate.rot, and plate.fix
 #' \describe{
@@ -11,9 +11,9 @@
 #'   \item{angle}{Rotation angle in degree}
 #'   \item{plate.fix}{ID of fixed/anchored plate}
 #'   }
-#' @return object of class \code{"finite"}
+#' @return data.frame
 #' @export
-as.finite <- function(x){
+check.finite <- function(x){
   if(!('plate.fix' %in% colnames(x))){
     stop("column 'plate.fix'is missing")
   }
@@ -32,19 +32,11 @@ as.finite <- function(x){
   if(!('age' %in% colnames(x))){
     stop("column 'age' is missing")
   }
-
-  if(length(class(x))>=1){
-    class(x)[2] = "finite"
-  } else {
-    append(class(x), "finite")
-  }
-
-  return(x)
 }
 
-#' @title Stage rotation class
+#' @title Stage rotation object
 #'
-#' @description  Assign a data.frame to class \code{'stage'}
+#' @description  Check if object has columns of a 'stage' rotation sequence
 #'
 #' @param x data.frame containing columns lat, lon, angle, plate.rot, and plate.fix
 #' \describe{
@@ -56,9 +48,9 @@ as.finite <- function(x){
 #'   \item{angle}{Rotation angle in degree}
 #'   \item{plate.fix}{ID of fixed/anchored plate}
 #'   }
-#' @return object of class \code{"stage"}
+#' @return data.frame
 #' @export
-as.stage <- function(x){
+check.stage <- function(x){
   if(!('plate.fix' %in% colnames(x))){
     stop("column 'plate.fix'is missing")
   }
@@ -80,14 +72,6 @@ as.stage <- function(x){
   if(!('min.age' %in% colnames(x))){
     stop("column 'min.age' is missing")
   }
-
-  if(length(class(x))>=1){
-    class(x)[2] = "stage"
-  } else {
-    append(class(x), "stage")
-  }
-
-  return(x)
 }
 
 
@@ -106,7 +90,7 @@ as.stage <- function(x){
 #'   \item{cmt}{Comments}
 #' }
 #' @details The comment column (last column) must not include **white space**. Use "_" to separate words instead.
-#' @seealso \code{\link{as.finite}}
+#' @seealso \code{\link{check.finite}}
 #' @importFrom utils read.table
 #' @export
 #' @examples
@@ -121,7 +105,7 @@ read.gplates <- function(x, ...) {
   )
   data$sep <- NULL
 
-  return(as.finite(data))
+  return(data)
 }
 
 
@@ -144,18 +128,19 @@ extract_stage_rotation <- function(a1, a2) {
 #' @title Stage rotations extraction
 #' @description extract all stage rotations from a sequence of  total
 #' reconstruction rotations
-#' @param x object of class \code{"finite"}. Sequence of total
-#' reconstruction rotations
+#' @param x data.frame. Sequence of total reconstruction rotations
 #' @param plate ID of plate
-#' @return object of class \code{"stage"}. Sequence of stage rotations
+#' @return data.frame. Sequence of stage rotations
 #' @details x must ba all equivalent total rotations.
 #' @references Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
 #' @export
-#' @seealso \code{\link{extract_stage_rotation}}, \code{\link{as.finite}}, \code{\link{as.stage}}
+#' @seealso \code{\link{extract_stage_rotation}}, \code{\link{check.finite}}, \code{\link{check.stage}}
 #' @examples
 #' data(pangea)
 #' extract_stage_rotations(pangea, plate=103)
 extract_stage_rotations <- function(x, plate) {
+  check.finite(x)
+
   data <- subset(x, x$plate.rot == plate)
   age.list <- unique(data$age)
   for (time in 2:length(age.list)) {
@@ -207,7 +192,7 @@ extract_stage_rotations <- function(x, plate) {
     }
   }
 
-  return(as.stage(stage_poles))
+  return(stage_poles)
 }
 
 
@@ -216,18 +201,14 @@ extract_stage_rotations <- function(x, plate) {
 #' @title Find missing rotations in a rotatin sequence
 #' @description Identifies gaps in a sequence of rotations with
 #' different reference systems
-#' @param x object of class \code{"finite"}. Sequence of total
+#' @param x data.frame. Sequence of total
 #' reconstruction rotations
-#' @return object of class \code{"finite"}. Sequence of total reconstruction rotations
+#' @return data.frame. Sequence of total reconstruction rotations
 #' @details x must ba all equivalent total rotations.
 #' @importFrom dplyr first
 #' @export
-#' @seealso \code{\link{as.finite}}, \code{\link{as.stage}}
+#' @seealso \code{\link{check.finite}}, \code{\link{check.stage}}
 find_missing_rotations <- function(x) {
-  # identify missing rotations in a sequence of rotations with different reference systems
-  # input df: dataframe consisting of lat, lon, ID, angle, and fixed
-  # output df: dataframe showing the missing rotations
-
   age.list <- unique(x$age) # all unique ages
 
   for (i in unique(x$plate.rot)) { # loop through all moving plates
@@ -257,10 +238,10 @@ find_missing_rotations <- function(x) {
 
 #' @title Invert rotation
 #' @description Changes plate motion (A relative to B) to (B relative to A)
-#' @param x object of class \code{"finite"} or \code{'stage'}
+#' @param x data.frame containing the sequence of rotations or the rotation
 #' @return object of with same class like x
 #' @export
-#' @seealso \code{\link{"as.finite"}}, \code{\link{"as.stage"}}
+#' @seealso \code{\link{"check.finite"}}, \code{\link{"check.stage"}}
 inverse_rotation <- function(x){
   x.rev <- x
   x.rev$plate.rot <- x$plate.fix
@@ -274,17 +255,18 @@ inverse_rotation <- function(x){
 #' @title Interpolate gaps in the sequence of total reconstruction rotations
 #' @description Interpolate missing rotations in a sequence of rotations with a
 #' different reference systems
-#' @param df object of class \code{"finite"}. Sequence of total
+#' @param df data.frame. Sequence of total
 #' reconstruction rotations
-#' @return object of class \code{"finite"}. Sequence of total
+#' @return data.frame. Sequence of total
 #' reconstruction rotations with filled gaps
 #' @importFrom plyr rbind.fill
 #' @export
-#' @seealso \code{\link{"as.finite"}}, \code{\link{as.stage}}
+#' @seealso \code{\link{"check.finite"}}, \code{\link{check.stage}}
 #' @examples
 #' data(pangea)
 #' interpolate_missing_finite_poles(pangea)
 interpolate_missing_finite_poles <- function(df) {
+  check.finite(df)
   missing.df <- find_missing_rotations(df)
   missing.df <- missing.df[order(missing.df$plate.rot, missing.df$age),]
 
@@ -404,17 +386,19 @@ interpolate_missing_finite_poles <- function(df) {
 #' @title Interpolate gaps in the sequence of total reconstruction rotations
 #' @description Interpolate missing rotations in a sequence of rotations with a
 #' different reference systems
-#' @param rot1 object of class \code{"finite"}.
-#' @param rot2 object of class \code{"finite"}. Must have the same fixed plate as rot1
+#' @param rot1 data.frame
+#' @param rot2 data.frame. Must have the same fixed plate as rot1
 #' @param tx number. Age of the requested intermediate finite rotation
 #' Must be in between \code{rot1$age} and \code{rot2$age}
-#' @return object of class \code{"finite"}. Sequence of total
+#' @return data.frame. Sequence of total
 #' reconstruction rotations with filled gaps
 #' @references Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
 #' @export
-#' @seealso \code{\link{'as.finite'}}
+#' @seealso \code{\link{'check.finite'}}
 #' @importFrom dplyr between
 finite_pole_interpolation <- function(rot1, rot2, tx) {
+  check.finite(rot1)
+  check.finite(rot2)
   if (rot1$plate.fix != rot2$plate.fix) {
     stop("Anchored/fixed plate of both total reconstruction rotations must be identical")
   }
@@ -464,11 +448,11 @@ finite_pole_interpolation <- function(rot1, rot2, tx) {
 
 #' @title Equivalent rotation
 #' @description Transform a sequence of rotations into a new reference system
-#' @param x sequence of plate rotations. Object of class \code{"finite"} of \code{"stage"}
+#' @param x sequence of plate rotations. Object of class \code{"data.frame"}, \code{"tibble"}, or \code{"matrix"}
 #' @param fixed ID of new fixed plate. Has to be one out of \code{x$plate.fix}
 #' @return sequence of plate rotations in new reference system. Same object class as x
 #' @export
-#' @seealso \code{\link{'as.finite'}}, \code{\link{'as.stage'}}
+#' @seealso \code{\link{'check.finite'}}, \code{\link{'check.stage'}}
 equivalent_rotation <- function(x, fixed) {
   if(!(fixed %in% x$plate.rot)){
     stop("'fixed' has to be one out of x$plate.rot")
@@ -523,12 +507,12 @@ equivalent_rotation <- function(x, fixed) {
 #' @title Equivalent rotations of different reference system
 #' @description Transform a sequence of rotations with different reference
 #' systems into one with a common reference system
-#' @param x sequence of plate rotations. An object of \code{"finite"} of \code{"stage"}
+#' @param x sequence of plate rotations. An object of \code{"data.frame"}, \code{"tibble"}, or \code{"matrix"}
 #' @param fixed ID of fixed plate. Must be same object class as x
 #' @return sequence of plate rotations. Same object class as x
 #' @importFrom dplyr %>% mutate
 #' @export
-#' @seealso \code{\link{'as.finite'}}, \code{\link{'as.stage'}}
+#' @seealso \code{\link{'check.finite'}}, \code{\link{'check.stage'}}
 #' @examples
 #' data(pangea)
 #' equivalent_rotations(pangea, fixed=103)

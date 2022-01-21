@@ -7,11 +7,11 @@
 interpolate_missing_finite_poles(df)
 }
 \arguments{
-\item{df}{object of class \code{"finite"}. Sequence of total
+\item{df}{data.frame. Sequence of total
 reconstruction rotations}
 }
 \value{
-object of class \code{"finite"}. Sequence of total
+data.frame. Sequence of total
 reconstruction rotations with filled gaps
 }
 \description{
@@ -23,5 +23,5 @@ data(pangea)
 interpolate_missing_finite_poles(pangea)
 }
 \seealso{
-\code{\link{"as.finite"}}, \code{\link{as.stage}}
+\code{\link{"check.finite"}}, \code{\link{check.stage}}
 }

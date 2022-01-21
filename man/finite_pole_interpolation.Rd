@@ -7,15 +7,15 @@
 finite_pole_interpolation(rot1, rot2, tx)
 }
 \arguments{
-\item{rot1}{object of class \code{"finite"}.}
+\item{rot1}{data.frame}
 
-\item{rot2}{object of class \code{"finite"}. Must have the same fixed plate as rot1}
+\item{rot2}{data.frame. Must have the same fixed plate as rot1}
 
 \item{tx}{number. Age of the requested intermediate finite rotation
 Must be in between \code{rot1$age} and \code{rot2$age}}
 }
 \value{
-object of class \code{"finite"}. Sequence of total
+data.frame. Sequence of total
 reconstruction rotations with filled gaps
 }
 \description{
@@ -26,5 +26,5 @@ different reference systems
 Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
 }
 \seealso{
-\code{\link{'as.finite'}}
+\code{\link{'check.finite'}}
 }

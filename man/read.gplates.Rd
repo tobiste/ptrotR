@@ -35,5 +35,5 @@ Pangea <- read.gplates(fname)
 print(Pangea)
 }
 \seealso{
-\code{\link{as.finite}}
+\code{\link{check.finite}}
 }

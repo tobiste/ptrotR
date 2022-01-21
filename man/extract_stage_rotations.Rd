@@ -7,13 +7,12 @@
 extract_stage_rotations(x, plate)
 }
 \arguments{
-\item{x}{object of class \code{"finite"}. Sequence of total
-reconstruction rotations}
+\item{x}{data.frame. Sequence of total reconstruction rotations}
 
 \item{plate}{ID of plate}
 }
 \value{
-object of class \code{"stage"}. Sequence of stage rotations
+data.frame. Sequence of stage rotations
 }
 \description{
 extract all stage rotations from a sequence of  total
@@ -30,5 +29,5 @@ extract_stage_rotations(pangea, plate=103)
 Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
 }
 \seealso{
-\code{\link{extract_stage_rotation}}, \code{\link{as.finite}}, \code{\link{as.stage}}
+\code{\link{extract_stage_rotation}}, \code{\link{check.finite}}, \code{\link{check.stage}}
 }

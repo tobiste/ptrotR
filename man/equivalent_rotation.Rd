@@ -7,7 +7,7 @@
 equivalent_rotation(x, fixed)
 }
 \arguments{
-\item{x}{sequence of plate rotations. Object of class \code{"finite"} of \code{"stage"}}
+\item{x}{sequence of plate rotations. Object of class \code{"data.frame"}, \code{"tibble"}, or \code{"matrix"}}
 
 \item{fixed}{ID of new fixed plate. Has to be one out of \code{x$plate.fix}}
 }
@@ -18,5 +18,5 @@ sequence of plate rotations in new reference system. Same object class as x
 Transform a sequence of rotations into a new reference system
 }
 \seealso{
-\code{\link{'as.finite'}}, \code{\link{'as.stage'}}
+\code{\link{'check.finite'}}, \code{\link{'check.stage'}}
 }
