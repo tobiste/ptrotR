@@ -5,6 +5,7 @@
 #' @param x data.frame containing columns lat, lon, angle, plate.rot, and plate.fix
 #' \describe{
 #'   \item{plate.rot}{ID of moving plate}
+#'   \item{age}{Age for finite rotation}
 #'   \item{lat}{Latitude of Euler pole of total reconstruction rotation}
 #'   \item{lon}{Longitude}
 #'   \item{angle}{Rotation angle in degree}
@@ -28,6 +29,9 @@ as.finite <- function(x){
   if(!('lon' %in% colnames(x))){
     stop("column 'lon' is missing")
   }
+  if(!('age' %in% colnames(x))){
+    stop("column 'age' is missing")
+  }
 
   if(length(class(x))>=1){
     class(x)[2] = "finite"
@@ -47,6 +51,8 @@ as.finite <- function(x){
 #'   \item{plate.rot}{ID of moving plate}
 #'   \item{lat}{Latitude of Euler pole of total reconstruction rotation}
 #'   \item{lon}{Longitude}
+#'   \item{min.age}{End of stage rotation}
+#'   \item{max.age}{Start of stage rotation}
 #'   \item{angle}{Rotation angle in degree}
 #'   \item{plate.fix}{ID of fixed/anchored plate}
 #'   }
@@ -67,6 +73,12 @@ as.stage <- function(x){
   }
   if(!('lon' %in% colnames(x))){
     stop("column 'lon' is missing")
+  }
+  if(!('max.age' %in% colnames(x))){
+    stop("column 'max.age' is missing")
+  }
+  if(!('min.age' %in% colnames(x))){
+    stop("column 'min.age' is missing")
   }
 
   if(length(class(x))>=1){
