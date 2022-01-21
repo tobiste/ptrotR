@@ -20,3 +20,6 @@ different reference systems
 \details{
 x must ba all equivalent total rotations.
 }
+\seealso{
+\code{\link{as.finite}}, \code{\link{as.stage}}
+}

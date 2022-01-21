@@ -22,3 +22,6 @@ systems into one with a common reference system
 data(pangea)
 equivalent_rotations(pangea, fixed=103)
 }
+\seealso{
+\code{\link{'as.finite'}}, \code{\link{'as.stage'}}
+}

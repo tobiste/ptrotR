@@ -18,3 +18,10 @@ reconstruction rotations with filled gaps
 Interpolate missing rotations in a sequence of rotations with a
 different reference systems
 }
+\examples{
+data(pangea)
+interpolate_missing_finite_poles(pangea)
+}
+\seealso{
+\code{\link{"as.finite"}}, \code{\link{as.stage}}
+}

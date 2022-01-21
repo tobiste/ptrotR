@@ -1,3 +1,42 @@
+#' @title Finite rotation class
+#'
+#' @description Assign a data.frame to class \code{'finite'}
+#'
+#' @param x data.frame containing columns lat, lon, angle, plate.rot, and plate.fix
+#' \describe{
+#'   \item{plate.rot}{ID of moving plate}
+#'   \item{lat}{Latitude of Euler pole of total reconstruction rotation}
+#'   \item{lon}{Longitude}
+#'   \item{angle}{Rotation angle in degree}
+#'   \item{plate.fix}{ID of fixed/anchored plate}
+#'   }
+#' @return object of class \code{"finite"}
+#' @export
+as.finite <- function(x){
+  class(x) <- "finite"
+  return(x)
+}
+
+#' @title Stage rotation class
+#'
+#' @description  Assign a data.frame to class \code{'stage'}
+#'
+#' @param x data.frame containing columns lat, lon, angle, plate.rot, and plate.fix
+#' \describe{
+#'   \item{plate.rot}{ID of moving plate}
+#'   \item{lat}{Latitude of Euler pole of total reconstruction rotation}
+#'   \item{lon}{Longitude}
+#'   \item{angle}{Rotation angle in degree}
+#'   \item{plate.fix}{ID of fixed/anchored plate}
+#'   }
+#' @return object of class \code{"stage"}
+#' @export
+as.stage <- function(x){
+  class(x) <- "stage"
+  return(x)
+}
+
+
 #' @title Read GPLATES' rotation file
 #' @description Imports a sequence of of total reconstruction rotations from a
 #' GPLATES' .rot file
@@ -12,8 +51,8 @@
 #'   \item{plate.fix}{ID of fixed/anchored plate}
 #'   \item{cmt}{Comments}
 #' }
-#' @details The comment column (last column) must not include
-#' **white space**. Use "_" to separate words instead.
+#' @details The comment column (last column) must not include **white space**. Use "_" to separate words instead.
+#' @seealso \code{\link{as.finite}}
 #' @importFrom utils read.table
 #' @export
 #' @examples
@@ -28,11 +67,10 @@ read.gplates <- function(x, ...) {
   )
   data$sep <- NULL
 
-  #setClass('finite', representation(plate.rot='numeric', age='numeric', lat='numeric', lon='numeric', angle='numeric', plate.fix='numeric', cmt = 'character'))
-
-  class(data) <- append(class(data), "finite")
-  return(data)
+  return(as.finite(data))
 }
+
+
 
 #' @title Stage rotation extraction
 #' @description extract stage rotation of two finite rotations
@@ -59,7 +97,7 @@ extract_stage_rotation <- function(a1, a2) {
 #' @details x must ba all equivalent total rotations.
 #' @references Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
 #' @export
-#' @seealso \code{\link{extract_stage_rotation}}
+#' @seealso \code{\link{extract_stage_rotation}}, \code{\link{as.finite}}, \code{\link{as.stage}}
 #' @examples
 #' data(pangea)
 #' extract_stage_rotations(pangea, plate=103)
@@ -115,8 +153,7 @@ extract_stage_rotations <- function(x, plate) {
     }
   }
 
-  class(stage_poles)[2] <- "stage"
-  return(stage_poles)
+  return(as.stage(stage_poles))
 }
 
 
@@ -131,6 +168,7 @@ extract_stage_rotations <- function(x, plate) {
 #' @details x must ba all equivalent total rotations.
 #' @importFrom dplyr first
 #' @export
+#' @seealso \code{\link{as.finite}}, \code{\link{as.stage}}
 find_missing_rotations <- function(x) {
   # identify missing rotations in a sequence of rotations with different reference systems
   # input df: dataframe consisting of lat, lon, ID, angle, and fixed
@@ -168,7 +206,8 @@ find_missing_rotations <- function(x) {
 #' @param x object of class \code{"finite"} or \code{'stage'}
 #' @return object of with same class like x
 #' @export
-reverse_rotation <- function(x){
+#' @seealso \code{\link{"as.finite"}}, \code{\link{"as.stage"}}
+inverse_rotation <- function(x){
   x.rev <- x
   x.rev$plate.rot <- x$plate.fix
   x.rev$plate.fix <- x$plate.rot
@@ -187,6 +226,7 @@ reverse_rotation <- function(x){
 #' reconstruction rotations with filled gaps
 #' @importFrom plyr rbind.fill
 #' @export
+#' @seealso \code{\link{"as.finite"}}, \code{\link{as.stage}}
 #' @examples
 #' data(pangea)
 #' interpolate_missing_finite_poles(pangea)
@@ -318,6 +358,7 @@ interpolate_missing_finite_poles <- function(df) {
 #' reconstruction rotations with filled gaps
 #' @references Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
 #' @export
+#' @seealso \code{\link{'as.finite'}}
 #' @importFrom dplyr between
 finite_pole_interpolation <- function(rot1, rot2, tx) {
   if (rot1$plate.fix != rot2$plate.fix) {
@@ -373,6 +414,7 @@ finite_pole_interpolation <- function(rot1, rot2, tx) {
 #' @param fixed ID of new fixed plate. Has to be one out of \code{x$plate.fix}
 #' @return sequence of plate rotations in new reference system. Same object class as x
 #' @export
+#' @seealso \code{\link{'as.finite'}}, \code{\link{'as.stage'}}
 equivalent_rotation <- function(x, fixed) {
   if(!(fixed %in% x$plate.rot)){
     stop("'fixed' has to be one out of x$plate.rot")
@@ -432,6 +474,7 @@ equivalent_rotation <- function(x, fixed) {
 #' @return sequence of plate rotations. Same object class as x
 #' @importFrom dplyr %>% mutate
 #' @export
+#' @seealso \code{\link{'as.finite'}}, \code{\link{'as.stage'}}
 #' @examples
 #' data(pangea)
 #' equivalent_rotations(pangea, fixed=103)

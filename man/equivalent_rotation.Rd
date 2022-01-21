@@ -17,3 +17,6 @@ sequence of plate rotations in new reference system. Same object class as x
 \description{
 Transform a sequence of rotations into a new reference system
 }
+\seealso{
+\code{\link{'as.finite'}}, \code{\link{'as.stage'}}
+}

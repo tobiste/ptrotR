@@ -27,11 +27,13 @@ Imports a sequence of of total reconstruction rotations from a
 GPLATES' .rot file
 }
 \details{
-The comment column (last column) must not include
-**white space**. Use "_" to separate words instead.
+The comment column (last column) must not include **white space**. Use "_" to separate words instead.
 }
 \examples{
 fname <- system.file("Pangea.rot", package="PlateTectonicMotionR")
 Pangea <- read.gplates(fname)
 print(Pangea)
+}
+\seealso{
+\code{\link{as.finite}}
 }

@@ -23,5 +23,8 @@ Interpolate missing rotations in a sequence of rotations with a
 different reference systems
 }
 \references{
-<div class="csl-entry">Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. <i>Computers and Geosciences</i>, <i>25</i>(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5</div>
+Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
+}
+\seealso{
+\code{\link{'as.finite'}}
 }
