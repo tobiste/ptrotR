@@ -10,9 +10,6 @@
 #'   \item{lon}{Longitude}
 #'   \item{angle}{Rotation angle in degree}
 #'   \item{plate.fix}{ID of fixed/anchored plate}
-setClass('finite', representation(plate.rot='numeric', age='numeric', lat='numeric', lon='numeric', angle='numeric', plate.fix='numeric',
-         cmt='character'))
-
 #'   \item{cmt}{Comments}
 #' }
 #' @details The comment column (last column) must not include
@@ -30,6 +27,8 @@ read.gplates <- function(x, ...) {
     "sep", "cmt"
   )
   data$sep <- NULL
+
+  #setClass('finite', representation(plate.rot='numeric', age='numeric', lat='numeric', lon='numeric', angle='numeric', plate.fix='numeric', cmt = 'character'))
 
   class(data) <- append(class(data), "finite")
   return(data)
@@ -164,6 +163,21 @@ find_missing_rotations <- function(x) {
 }
 
 
+#' @title Invert rotation
+#' @description Changes plate motion (A relative to B) to (B relative to A)
+#' @param x object of class \code{"finite"} or \code{'stage'}
+#' @return object of with same class like x
+#' @export
+reverse_rotation <- function(x){
+  x.rev <- x
+  x.rev$plate.rot <- x$plate.fix
+  x.rev$plate.fix <- x$plate.rot
+  x.rev$angle <- -x$angle
+  return(x.rev)
+}
+
+
+
 #' @title Interpolate gaps in the sequence of total reconstruction rotations
 #' @description Interpolate missing rotations in a sequence of rotations with a
 #' different reference systems
@@ -173,7 +187,7 @@ find_missing_rotations <- function(x) {
 #' reconstruction rotations with filled gaps
 #' @importFrom plyr rbind.fill
 #' @export
-#' #' @examples
+#' @examples
 #' data(pangea)
 #' interpolate_missing_finite_poles(pangea)
 interpolate_missing_finite_poles <- function(df) {
