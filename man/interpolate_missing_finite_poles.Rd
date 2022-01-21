@@ -23,5 +23,5 @@ data(pangea)
 interpolate_missing_finite_poles(pangea)
 }
 \seealso{
-\code{\link{"check.finite"}}, \code{\link{check.stage}}
+\code{\link{check.finite}}, \code{\link{check.stage}}
 }

@@ -6,7 +6,7 @@
 #' @param geo logical, TRUE (default) if Euler pole axis is given in
 #' geographical coordinates (latitude, longitude). FALSE if given in cartesian
 #' coordinates (x, y, z)
-#' @return An object of class \code{"euler.pole"}, i.e., a \code{data.frame}
+#' @return An object of class \code{"euler.pole"}
 #' containing the Euler pole axis in geographical and cartesian coordinates.
 #' @export
 #' @importFrom PlateTectonicStressR geographical_to_cartesian cartesian_to_geographical
@@ -35,21 +35,23 @@ euler_pole <- function(x, y, z = NA, geo = TRUE) {
   return(ep)
 }
 
+
 #' @title Antipodal Euler pole
-#' @description Creates a Euler pole antidpodal location
-#' @param ep Euler pole object
+#' @description Euler pole on the other side of the hemisphere
+#' @param x data.frame containing the sequence of rotations or the rotation
 #' @return Object of class \code{"euler.pole"}
-#' @export
 #' @importFrom PlateTectonicStressR longitude_modulo
+#' @export
 #' @examples
 #' euler.pole <- euler_pole(90, 0)
 #' antipodal_euler_pole(euler.pole)
-antipodal_euler_pole <- function(ep) {
-  lat.inv <- -ep$lat
-  lon.inv <- PlateTectonicStressR::longitude_modulo(ep$lon + 180)
+antipodal_euler_pole <- function(x) {
+  lat.inv <- -x$lat
+  lon.inv <- PlateTectonicStressR::longitude_modulo(x$lon + 180)
   ep.inv <- euler_pole(lat.inv, lon.inv)
   return(ep.inv)
 }
+
 
 
 #' @title Euler rotation matrix

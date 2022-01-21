@@ -23,5 +23,5 @@ data(pangea)
 equivalent_rotations(pangea, fixed=103)
 }
 \seealso{
-\code{\link{'check.finite'}}, \code{\link{'check.stage'}}
+\code{\link{check.finite}}, \code{\link{check.stage}}
 }

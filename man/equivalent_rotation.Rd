@@ -18,5 +18,5 @@ sequence of plate rotations in new reference system. Same object class as x
 Transform a sequence of rotations into a new reference system
 }
 \seealso{
-\code{\link{'check.finite'}}, \code{\link{'check.stage'}}
+\code{\link{check.finite}}, \code{\link{check.stage}}
 }

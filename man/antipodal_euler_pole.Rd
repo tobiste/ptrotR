@@ -4,16 +4,16 @@
 \alias{antipodal_euler_pole}
 \title{Antipodal Euler pole}
 \usage{
-antipodal_euler_pole(ep)
+antipodal_euler_pole(x)
 }
 \arguments{
-\item{ep}{Euler pole object}
+\item{x}{data.frame containing the sequence of rotations or the rotation}
 }
 \value{
 Object of class \code{"euler.pole"}
 }
 \description{
-Creates a Euler pole antidpodal location
+Euler pole on the other side of the hemisphere
 }
 \examples{
 euler.pole <- euler_pole(90, 0)

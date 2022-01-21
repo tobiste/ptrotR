@@ -18,7 +18,7 @@ geographical coordinates (latitude, longitude). FALSE if given in cartesian
 coordinates (x, y, z)}
 }
 \value{
-An object of class \code{"euler.pole"}, i.e., a \code{data.frame}
+An object of class \code{"euler.pole"}
 containing the Euler pole axis in geographical and cartesian coordinates.
 }
 \description{

@@ -23,3 +23,7 @@ data.frame
 \description{
 Check if object has columns of a finite rotation sequence
 }
+\examples{
+data(pangea)
+check.finite(pangea)
+}

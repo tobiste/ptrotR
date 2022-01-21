@@ -16,5 +16,5 @@ object of with same class like x
 Changes plate motion (A relative to B) to (B relative to A)
 }
 \seealso{
-\code{\link{"check.finite"}}, \code{\link{"check.stage"}}
+\code{\link{check.finite}}, \code{\link{check.stage}}
 }

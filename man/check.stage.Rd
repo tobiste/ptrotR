@@ -24,3 +24,7 @@ data.frame
 \description{
 Check if object has columns of a 'stage' rotation sequence
 }
+\examples{
+data(pangea)
+check.stage(extract_stage_rotations(pangea, plate=103))
+}
