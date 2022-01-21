@@ -13,7 +13,28 @@
 #' @return object of class \code{"finite"}
 #' @export
 as.finite <- function(x){
-  class(x) <- "finite"
+  if(!(plate.fix %in% colnames(x))){
+    stop("column 'plate.fix'is missing")
+  }
+  if(!(plate.rot %in% colnames(x))){
+    stop("column 'plate.rot' is missing")
+  }
+  if(!(angle %in% colnames(x))){
+    stop("column 'angle' is missing")
+  }
+  if(!(lat %in% colnames(x))){
+    stop("column 'lat' is missing")
+  }
+  if(!(lon %in% colnames(x))){
+    stop("column 'lon' is missing")
+  }
+
+  class(x) <- ifselse(
+    length(class(x))>=1,
+    class(x)[2] = "finite",
+    append(class(x), "finite")
+  )
+
   return(x)
 }
 
@@ -32,7 +53,27 @@ as.finite <- function(x){
 #' @return object of class \code{"stage"}
 #' @export
 as.stage <- function(x){
-  class(x) <- "stage"
+  if(!(plate.fix %in% colnames(x))){
+    stop("column 'plate.fix'is missing")
+  }
+  if(!(plate.rot %in% colnames(x))){
+    stop("column 'plate.rot' is missing")
+  }
+  if(!(angle %in% colnames(x))){
+    stop("column 'angle' is missing")
+  }
+  if(!(lat %in% colnames(x))){
+    stop("column 'lat' is missing")
+  }
+  if(!(lon %in% colnames(x))){
+    stop("column 'lon' is missing")
+  }
+
+  class(x) <- ifselse(
+    length(class(x))>=1,
+    class(x)[2] = "stage",
+    append(class(x), "stage")
+  )
   return(x)
 }
 
@@ -307,8 +348,8 @@ interpolate_missing_finite_poles <- function(df) {
                   )
                 )
               )
-            df <- unique(plyr::rbind.fill(df, missing.rot)) # add new rotation to rot file
-            x$missing[i] <- FALSE # add tell that the rotation is not missing anymore
+              df <- unique(plyr::rbind.fill(df, missing.rot)) # add new rotation to rot file
+              x$missing[i] <- FALSE # add tell that the rotation is not missing anymore
 
 
             } else {
@@ -339,7 +380,7 @@ interpolate_missing_finite_poles <- function(df) {
             }
           }
         }
-       }
+      }
     }
   }
 
