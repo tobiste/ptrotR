@@ -15,3 +15,6 @@ angle in degree
 \description{
 Extracts the rotation anglr from rotation matrix
 }
+\note{
+If rotation (i.e. angle) is too small, round-off errors are introduced. Here, too small rotations will be interpreted as equal rotations.
+}

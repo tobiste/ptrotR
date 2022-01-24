@@ -118,6 +118,7 @@ euler_rotation <- function(ep, psi, x) {
 #' @param v vector
 #' @return normalized vector
 #' @export
+#' @seealso  \code{\link[ppls]{normalize.vector}}
 #' @examples
 #' normalize_vector(1:5)
 normalize_vector <- function(v) {
@@ -131,7 +132,6 @@ normalize_vector <- function(v) {
 #' @return 3x3 matrix
 #' @importFrom pracma cosd sind
 #' @export
-#' @examples
 #' rotation_matrix(c(0, 0, 1), 45)
 rotation_matrix <- function(n, alpha) {
   n <- normalize_vector(n) # unit vector
@@ -161,15 +161,20 @@ rotation <- function(x, n, alpha) {
   c(rotation_matrix(n, alpha) %*% x)
 }
 
-
 #' @title Rotation angle from rotation matrix
 #' @description Extracts the rotation anglr from rotation matrix
 #' @param A 3x3 matrix
+#' @note If rotation (i.e. angle) is too small, round-off errors are introduced. Here, too small rotations will be interpreted as equal rotations.
 #' @return angle in degree
 #' @importFrom pracma rad2deg
 #' @export
 rotation_angle <- function(A) {
-  psi <- acos((sum(diag(A)) - 1) / 2)
+  a <- (sum( diag( A ) ) - 1 ) / 2
+  if(a >= 1) {
+    warning('introduces round-off')
+    a <- 1
+  }
+  psi <- acos(a)
   return(pracma::rad2deg(psi))
 }
 

@@ -18,3 +18,6 @@ normalizes a vector to unit length#'
 \examples{
 normalize_vector(1:5)
 }
+\seealso{
+\code{\link[ppls]{normalize.vector}}
+}
