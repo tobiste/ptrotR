@@ -264,6 +264,7 @@ inverse_rotation <- function(x){
 #' @param x data.frame. Sequence of total reconstruction rotations
 #' @return data.frame.
 #' @export
+#' @importFrom plyr rbind.fill
 #' @examples
 #' data(pangea)
 #' add_last_finite_rotations(pangea)
@@ -282,7 +283,7 @@ add_last_finite_rotations <- function(x){
           plate.fix = x.id.oldest1$plate.fix,
           cmt = 'added_oldest_finite_rotation'
         )
-        x <- rbind(x, x.id.oldest2)
+        x <- plyr::rbind.fill(x, x.id.oldest2)
       }
     }
   return(x)
@@ -554,6 +555,10 @@ equivalent_rotation <- function(x, fixed) {
 #' data(pangea)
 #' equivalent_rotations(pangea, fixed=103)
 equivalent_rotations <- function(x, fixed) {
+  if(missing(fixed)){
+    stop('Argument "fixed" is missing')
+  }
+
   x.compl <- interpolate_missing_finite_poles(x)
   x.eq <- x[0, ] # create blank
 
