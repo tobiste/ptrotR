@@ -259,6 +259,34 @@ inverse_rotation <- function(x){
 }
 
 
+#' @title Last finite rotation in sequence
+#' @description Adds last finite rotation in a sequence assuming that the plate motion does not change
+#' @param x data.frame. Sequence of total reconstruction rotations
+#' @return data.frame.
+#' @export
+#' @examples
+#' data(pangea)
+#' add_last_finite_rotations(pangea)
+add_last_finite_rotations <- function(x){
+  t <- max(x$age)
+  for(id in x$plate.rot){ # loop through all plates
+    x.id <- subset(x, x$plate.rot == id)
+    if(max(x.id$age) != t){
+        x.id.oldest1 <- subset(x.id, x.id$age==max(x.id$age))
+        x.id.oldest2 <- data.frame(
+          plate.rot = x.id.oldest1$plate.rot,
+          age = t,
+          lat = x.id.oldest1$lat,
+          lon = x.id.oldest1$lon,
+          angle = x.id.oldest1$angle,
+          plate.fix = x.id.oldest1$plate.fix,
+          cmt = 'added_oldest_finite_rotation'
+        )
+        x <- rbind(x, x.id.oldest2)
+      }
+    }
+  return(x)
+}
 
 
 #' @title Interpolate gaps in the sequence of total reconstruction rotations
@@ -276,7 +304,8 @@ inverse_rotation <- function(x){
 #' interpolate_missing_finite_poles(pangea)
 interpolate_missing_finite_poles <- function(df) {
   check.finite(df)
-  missing.df <- find_missing_rotations(df)
+  missing.df0 <- add_last_finite_rotations(df)
+  missing.df <- find_missing_rotations(missing.df0)
   missing.df <- missing.df[order(missing.df$plate.rot, missing.df$age),]
 
   missing.rot <- data.frame(
@@ -291,10 +320,10 @@ interpolate_missing_finite_poles <- function(df) {
 
   df <- df[order(df$plate.rot, df$age),]
 
-  for (id in unique(missing.df$plate.rot)) {
+  for (id in unique(missing.df$plate.rot)) { # loop through all plates
     x <- subset(missing.df, missing.df$plate.rot == id)
 
-    for (i in seq_along(x$missing)) {
+    for (i in seq_along(x$missing)) { # loop through all finite rotations
       if (x$missing[i]) {
         missing.age <- x$age[i]
 
@@ -387,7 +416,6 @@ interpolate_missing_finite_poles <- function(df) {
       }
     }
   }
-
   return(df)
 }
 
