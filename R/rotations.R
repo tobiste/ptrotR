@@ -199,7 +199,14 @@ rotation_axis <- function(A) {
 #' @export
 euler_from_rot <- function(A) {
   psi <- rotation_angle(A)
-  ra <- rotation_axis(A)
+  if(psi != 0){
+    ra <- rotation_axis(A)
+  } else { # if there is no rotation, then axis is eual to Earth's spin axis
+    ra <= c()
+    ra[1] <- 0
+    ra[2] <- 0
+    ra[3] <- 1
+    }
   ep <- euler_pole(ra[1], ra[2], ra[3], geo = FALSE)
   return(list(pole = ep, psi = psi))
 }
