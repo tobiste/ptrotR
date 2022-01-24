@@ -113,12 +113,12 @@ euler_rotation <- function(ep, psi, x) {
 }
 
 
-#' @title Normalization of a vector#'
-#' @description normalizes a vector to unit length#'
+#' @title Normalization of a vector
+#' @description normalizes a vector to unit length
 #' @param v vector
 #' @return normalized vector
 #' @export
-#' @seealso  \code{\link[ppls]{normalize.vector}}
+#' @seealso \code{\link[ppls]{normalize.vector}}
 #' @examples
 #' normalize_vector(1:5)
 normalize_vector <- function(v) {
@@ -132,6 +132,7 @@ normalize_vector <- function(v) {
 #' @return 3x3 matrix
 #' @importFrom pracma cosd sind
 #' @export
+#' @examples
 #' rotation_matrix(c(0, 0, 1), 45)
 rotation_matrix <- function(n, alpha) {
   n <- normalize_vector(n) # unit vector

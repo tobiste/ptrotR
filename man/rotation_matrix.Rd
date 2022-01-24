@@ -17,3 +17,6 @@ rotation_matrix(n, alpha)
 \description{
 Creates rotation matrix from a rotation axis and angle
 }
+\examples{
+rotation_matrix(c(0, 0, 1), 45)
+}

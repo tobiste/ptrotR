@@ -2,7 +2,7 @@
 % Please edit documentation in R/rotations.R
 \name{normalize_vector}
 \alias{normalize_vector}
-\title{Normalization of a vector#'}
+\title{Normalization of a vector}
 \usage{
 normalize_vector(v)
 }
@@ -13,7 +13,7 @@ normalize_vector(v)
 normalized vector
 }
 \description{
-normalizes a vector to unit length#'
+normalizes a vector to unit length
 }
 \examples{
 normalize_vector(1:5)
