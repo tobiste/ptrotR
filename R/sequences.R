@@ -304,8 +304,8 @@ add_last_finite_rotations <- function(x){
 #' interpolate_missing_finite_poles(pangea)
 interpolate_missing_finite_poles <- function(df) {
   check.finite(df)
-  missing.df0 <- add_last_finite_rotations(df)
-  missing.df <- find_missing_rotations(missing.df0)
+  df <- add_last_finite_rotations(df)
+  missing.df <- find_missing_rotations(df)
   missing.df <- missing.df[order(missing.df$plate.rot, missing.df$age),]
 
   missing.rot <- data.frame(

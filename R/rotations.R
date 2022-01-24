@@ -197,8 +197,6 @@ rotation_axis <- function(A) {
 #' \item{psi}{Euler angle in degree}
 #' }
 #' @export
-#' @examples
-#'
 euler_from_rot <- function(A) {
   psi <- rotation_angle(A)
   ra <- rotation_axis(A)
