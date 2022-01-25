@@ -8,8 +8,6 @@ grid_points(gridsize)
 }
 \arguments{
 \item{gridsize}{grid size in degree}
-
-\item{euler}{data.frame. containing lat, lon, and angle (optional) of Euler rotation}
 }
 \value{
 data.frame

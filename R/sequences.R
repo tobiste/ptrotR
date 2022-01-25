@@ -587,6 +587,7 @@ equivalent_rotations <- function(x, fixed) {
 #' stages <- extract_stage_rotations(pangea, plate=103)
 #' eulerpole_migration(stages)
 eulerpole_migration <- function(x) {
+  plate.rot <- ep.migration.vel <- min.age <- NULL
   check.stage(x)
 
   x$antipodal <- ifelse(x$lat > 0, TRUE, FALSE)
@@ -631,7 +632,6 @@ eulerpole_migration <- function(x) {
 
 #' @title Create a grid
 #' @description Create a grid of equally spaced points
-#' @param euler  data.frame. containing lat, lon, and angle (optional) of Euler rotation
 #' @param gridsize  grid size in degree
 #' @return data.frame
 #' @export
@@ -661,8 +661,8 @@ grid_points <- function(gridsize){
 #' @export
 #' @examples
 #' data(pangea)
-#' euler <- subset(pangea, pangea$plate.rot == 103, pangea$age == 250)
-#' vector_grid(euler)
+#' euler <- subset(pangea, pangea$plate.rot == 103 & pangea$age == 250)
+#' plate_motion_grid(euler)
 plate_motion_grid <- function(euler, gridsize = 5){
   grid <- grid_points(gridsize)
   #r <-  6371.00887714

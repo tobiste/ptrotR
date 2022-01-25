@@ -19,6 +19,6 @@ Create a grid of the plate motion direction and velocity
 }
 \examples{
 data(pangea)
-euler <- subset(pangea, pangea$plate.rot == 103, pangea$age == 250)
-vector_grid(euler)
+euler <- subset(pangea, pangea$plate.rot == 103 & pangea$age == 250)
+plate_motion_grid(euler)
 }

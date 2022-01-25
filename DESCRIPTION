@@ -9,6 +9,8 @@ Description: This package is a free and open-source R package for
     analysing and reconstructing plate motion.
 License: GPL (>= 3)
 URL: https://tobiasstephan1.wixsite.com/tobi
+Depends: 
+    R (>= 3.5.0)
 Imports: 
     dplyr,
     PlateTectonicStressR,
