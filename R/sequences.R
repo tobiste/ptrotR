@@ -661,7 +661,7 @@ grid_points <- function(gridsize){
 #' @export
 #' @examples
 #' data(pangea)
-#' euler <- subset(pangea, pangea$plate.rot = 103, pangea$age == 250)
+#' euler <- subset(pangea, pangea$plate.rot == 103, pangea$age == 250)
 #' vector_grid(euler)
 plate_motion_grid <- function(euler, gridsize = 5){
   grid <- grid_points(gridsize)

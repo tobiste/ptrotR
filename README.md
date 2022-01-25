@@ -1,3 +1,7 @@
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/tobiste/PlateTectonicMotionR/workflows/R-CMD-check/badge.svg)](https://github.com/tobiste/PlateTectonicMotionR/actions)
+<!-- badges: end -->
+
 # PlateTectonicMotionR
 **PlateTectonicMotionR** is a free and open-source **R** package for analysing and reconstructing plate motion.
 

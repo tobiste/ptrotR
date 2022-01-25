@@ -1,24 +1,23 @@
-Package: PlateTectonicMotionR
 Type: Package
+Package: PlateTectonicMotionR
 Title: Tools for rotating tectonic plates in R
 Version: 0.1.0
-Author: 
-    person("Tobias", "Stephan", , "tobias.stephan1@yahoo.com", role = c("aut", "cre"),
-    comment = c(ORCID = "0000-0002-9290-014X"))
+Author: person("Tobias", "Stephan", , "tobias.stephan1@yahoo.com", role =
+    c("aut", "cre"), comment = c(ORCID = "0000-0002-9290-014X"))
 Maintainer: Tobias Stephan <tobias.stephan1@yahoo.com>
-Description: This package is a free and open-source R package for analysing 
-    and reconstructing plate motion.
+Description: This package is a free and open-source R package for
+    analysing and reconstructing plate motion.
 License: GPL (>= 3)
 URL: https://tobiasstephan1.wixsite.com/tobi
 Imports: 
     dplyr,
-    pracma,
-    plyr,
     PlateTectonicStressR,
+    plyr,
+    pracma,
     utils
 Suggests:
-    knitr,
     devtools,
+    knitr,
     roxygen2,
     testthat
 Encoding: UTF-8
