@@ -207,8 +207,8 @@ euler_from_rot <- function(A) {
   psi <- rotation_angle(A)
   if(psi != 0){
     ra <- rotation_axis(A)
-  } else { # if there is no rotation, then axis is eual to Earth's spin axis
-    ra <= c()
+  } else { # if there is no rotation, then axis is equal to Earth's spin axis
+    ra <- c()
     ra[1] <- 0
     ra[2] <- 0
     ra[3] <- 1
