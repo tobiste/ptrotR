@@ -4,10 +4,14 @@
 \alias{grid_points}
 \title{Create a grid}
 \usage{
-grid_points(gridsize)
+grid_points(gridsize, lat.lim, lon.lim)
 }
 \arguments{
 \item{gridsize}{grid size in degree}
+
+\item{lat.lim}{vector, range of latitudes}
+
+\item{lon.lim}{vector, range of longitudes}
 }
 \value{
 data.frame

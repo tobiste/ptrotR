@@ -4,12 +4,21 @@
 \alias{plate_motion_grid}
 \title{Plate motion grid}
 \usage{
-plate_motion_grid(euler, gridsize = 5)
+plate_motion_grid(
+  euler,
+  gridsize = 5,
+  lat.lim = c(-90, 90),
+  lon.lim = c(-180, 180)
+)
 }
 \arguments{
 \item{euler}{data.frame. containing lat, lon, and angle (optional) of Euler rotation}
 
 \item{gridsize}{grid size in degree}
+
+\item{lat.lim}{vector, range of latitudes}
+
+\item{lon.lim}{vector, range of longitudes}
 }
 \value{
 data.frame with plate motion direction at grid point

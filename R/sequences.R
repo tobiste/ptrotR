@@ -633,11 +633,14 @@ eulerpole_migration <- function(x) {
 #' @title Create a grid
 #' @description Create a grid of equally spaced points
 #' @param gridsize  grid size in degree
+#' @param lat.lim vector, range of latitudes
+#' @param lon.lim vector, range of longitudes
 #' @return data.frame
 #' @export
-grid_points <- function(gridsize){
-  lats <- seq(-90, 90, gridsize)
-  lons <- seq(-180, 180, gridsize)
+grid_points <- function(gridsize, lat.lim, lon.lim){
+
+  lats <- seq(min(lat.lim), max(lat.lim), gridsize)
+  lons <- seq(min(lon.lim), max(lon.lim), gridsize)
 
   grid.df <- data.frame("lon" = as.numeric(),
                         "lat" = as.numeric())
@@ -656,6 +659,8 @@ grid_points <- function(gridsize){
 #' @description Create a grid of the plate motion direction and velocity
 #' @param euler  data.frame. containing lat, lon, and angle (optional) of Euler rotation
 #' @param gridsize  grid size in degree
+#' @param lat.lim vector, range of latitudes
+#' @param lon.lim vector, range of longitudes
 #' @return data.frame with plate motion direction at grid point
 #' @importFrom PlateTectonicStressR get_azimuth abs_vel
 #' @export
@@ -663,8 +668,8 @@ grid_points <- function(gridsize){
 #' data(pangea)
 #' euler <- subset(pangea, pangea$plate.rot == 103 & pangea$age == 250)
 #' plate_motion_grid(euler)
-plate_motion_grid <- function(euler, gridsize = 5){
-  grid <- grid_points(gridsize)
+plate_motion_grid <- function(euler, gridsize = 5, lat.lim = c(-90, 90), lon.lim = c(-180, 180)){
+  grid <- grid_points(gridsize, lat.lim, lon.lim)
   #r <-  6371.00887714
 
   for(i in 1:nrow(grid)){
