@@ -2,12 +2,12 @@
 [![R-CMD-check](https://github.com/tobiste/PlateTectonicMotionR/workflows/R-CMD-check/badge.svg)](https://github.com/tobiste/PlateTectonicMotionR/actions)
 <!-- badges: end -->
 
-# PlateTectonicMotionR
-**PlateTectonicMotionR** is a free and open-source **R** package for analysing and reconstructing plate motion.
+# ptrotR
+**ptrotR** is a free and open-source **R** package for analysing and reconstructing plate motion.
 
 ## Prerequisites
 
-You must have R installed on your system (see http://r-project.org). Additionally, to install PlateTectonicMotionR from Github, you also need the devtools package. This can be installed by typing the following code at the R command line prompt:
+You must have R installed on your system (see http://r-project.org). Additionally, to install ptrotR from Github, you also need the devtools package. This can be installed by typing the following code at the R command line prompt:
 
 ```
 install.packages("remotes")
@@ -15,11 +15,11 @@ install.packages("remotes")
 
 ## Installation
 
-The most recent development version  of PlateTectonicStressR is available from Github and can be installed on your system as follows:
+The most recent development version  of ptrotR is available from Github and can be installed on your system as follows:
 
 ```
-remotes::install_github('tobiste/PlateTectonicMotionR')
-library('PlateTectonicMotionR')
+remotes::install_github('tobiste/ptrotR')
+library('ptrotR')
 ```
 
 ## Author
