@@ -258,6 +258,25 @@ inverse_rotation <- function(x){
   return(x.rev)
 }
 
+#' @title Antipodal rotation
+#' @description Euler pole on the other side of the hemisphere
+#' @param x data.frame containing the sequence of rotations or the rotation
+#' @return object of with same class like x
+#' @importFrom PlateTectonicStressR longitude_modulo
+#' @export
+#' @examples
+#' euler.pole <- data.frame(lat=c(27, -21), lon=c(17, -151), angle=c(0.4, 0.42))
+#' antipodal_rotation(euler.pole)
+antipodal_rotation <- function(x) {
+  for(i in seq_along(x$lat)) {
+  x$lat[i] <- -x$lat[i]
+  x$lon[i] <- PlateTectonicStressR::longitude_modulo(x$lon[i] + 180)
+  x$angle[i] <- -x$angle[i]
+  }
+  return(x)
+}
+
+
 
 #' @title Last finite rotation in sequence
 #' @description Adds last finite rotation in a sequence assuming that the plate motion does not change
