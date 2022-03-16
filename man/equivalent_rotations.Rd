@@ -15,7 +15,7 @@ equivalent_rotations(x, fixed)
 sequence of plate rotations. Same object class as x
 }
 \description{
-Transform a sequence of rotations with different reference
+Transforms a sequence of rotations with different reference
 systems into one with a common reference system
 }
 \examples{
