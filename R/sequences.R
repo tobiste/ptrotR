@@ -102,7 +102,7 @@ check.stage <- function(x){
 #' @importFrom utils read.table
 #' @export
 #' @examples
-#' fname <- system.file("Pangea.rot", package="PlateTectonicMotionR")
+#' fname <- system.file("Pangea.rot", package="ptrotR")
 #' Pangea <- read.gplates(fname)
 #' print(Pangea)
 read.gplates <- function(x, ...) {

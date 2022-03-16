@@ -30,7 +30,7 @@ GPLATES' .rot file
 The comment column (last column) must not include **white space**. Use "_" to separate words instead.
 }
 \examples{
-fname <- system.file("Pangea.rot", package="PlateTectonicMotionR")
+fname <- system.file("Pangea.rot", package="ptrotR")
 Pangea <- read.gplates(fname)
 print(Pangea)
 }
