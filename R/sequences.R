@@ -154,11 +154,11 @@ extract_stage_rotations <- function(x, plate) {
   for (time in 2:length(age.list)) {
     rot.i <- subset(data, data$age == age.list[time - 1])
     finite.i <-
-      euler_rot(euler_pole(rot.i$lat, rot.i$lon), rot.i$angle)
+      tectonicr::euler_rot(tectonicr::euler_pole(rot.i$lat, rot.i$lon), rot.i$angle)
 
     rot.j <- subset(data, data$age == age.list[time])
     finite.j <-
-      euler_rot(euler_pole(rot.j$lat, rot.j$lon), rot.j$angle)
+      tectonicr::euler_rot(tectonicr::euler_pole(rot.j$lat, rot.j$lon), rot.j$angle)
 
     euler_pole_error <- NA
     ep.i <- tryCatch(
@@ -262,7 +262,7 @@ inverse_rotation <- function(x){
 #' @description Euler pole on the other side of the hemisphere
 #' @param x data.frame containing the sequence of rotations or the rotation
 #' @return object of with same class like x
-#' @importFrom PlateTectonicStressR longitude_modulo
+#' @importFrom tectonicr longitude_modulo
 #' @export
 #' @examples
 #' euler.pole <- data.frame(lat=c(27, -21), lon=c(17, -151), angle=c(0.4, 0.42))
@@ -270,7 +270,7 @@ inverse_rotation <- function(x){
 antipodal_rotation <- function(x) {
   for(i in seq_along(x$lat)) {
   x$lat[i] <- -x$lat[i]
-  x$lon[i] <- PlateTectonicStressR::longitude_modulo(x$lon[i] + 180)
+  x$lon[i] <- tectonicr::longitude_modulo(x$lon[i] + 180)
   x$angle[i] <- -x$angle[i]
   }
   return(x)
@@ -481,11 +481,11 @@ finite_pole_interpolation <- function(rot1, rot2, tx) {
 
   # rotation matrix for rotation from t=0 to t=1
   ROT_t01 <-
-    euler_rot(euler_pole(rot1$lat, rot1$lon), psi = rot1$angle)
+    tectonicr::euler_rot(tectonicr::euler_pole(rot1$lat, rot1$lon), psi = rot1$angle)
 
   # rotation matrix for rotation from t=0 to t=2
   ROT_t02 <-
-    euler_rot(euler_pole(rot2$lat, rot2$lon), psi = rot2$angle)
+    tectonicr::euler_rot(tectonicr::euler_pole(rot2$lat, rot2$lon), psi = rot2$angle)
 
   # stage pole between rot1 and rot2
   rot12 <- extract_stage_rotation(ROT_t02, ROT_t01)
@@ -499,75 +499,18 @@ finite_pole_interpolation <- function(rot1, rot2, tx) {
 
   # intermediate finite rotation is rotation composition of rot1 and stage rotation rot12
   ROT0tx <- ROT_t1x %*% ROT_t01
-  return(euler_from_rot(ROT0tx))
-}
-
-
-#' @title Equivalent rotation
-#' @description Transform a sequence of rotations into a new reference system
-#' @param x sequence of plate rotations. Object of class \code{"data.frame"}, \code{"tibble"}, or \code{"matrix"}
-#' @param fixed ID of new fixed plate. Has to be one out of \code{x$plate.fix}
-#' @return sequence of plate rotations in new reference system. Same object class as x
-#' @export
-#' @seealso \code{\link{check.finite}}, \code{\link{check.stage}}
-equivalent_rotation <- function(x, fixed) {
-  if(!(fixed %in% x$plate.rot)){
-    stop("'fixed' has to be one out of x$plate.rot")
-  }
-  lat.eq <- c()
-  lon.eq <- c()
-  angle.eq <- c()
-
-  fixed.plate <- subset(x, x$plate.rot == fixed) # 'fixed' has to be one out of x$plate.rot
-  fixed.ep <- euler_pole(fixed.plate$lat, fixed.plate$lon)
-
-  if (exists(paste0("fixed.plate$plate.fix"))) {
-    fixed0.plate <- subset(x, x$plate.rot == fixed.plate$plate.fix)
-    fixed0.ep <- euler_pole(fixed0.plate$lat, fixed0.plate$lon)
-    fixed0.rot <- euler_rot(fixed0.ep, -fixed0.plate$angle)
-
-    fixed.rot <-
-      euler_rot(fixed.ep, fixed.plate$angle) %*% fixed0.rot
-  } else {
-    fixed.rot <- euler_rot(fixed.ep, -fixed.plate$angle)
-  }
-
-  for (i in seq_along(x$plate.rot)) {
-    if (x$plate.rot[i] == fixed) {
-      # fixed plate has no rotation
-      lat.eq[i] <- 90
-      lon.eq[i] <- 0
-      angle.eq[i] <- 0
-    } else {
-      # Composition of finite rotations
-      equivalent.rot <- fixed.rot %*%
-        euler_rot(euler_pole(x$lat[i], x$lon[i]), x$angle[i])
-
-      equivalent.ep <- euler_from_rot(equivalent.rot)
-
-      lat.eq[i] <- equivalent.ep$pole$lat
-      lon.eq[i] <- equivalent.ep$pole$lon
-      angle.eq[i] <- equivalent.ep$psi
-    }
-  }
-  x.eq <- data.frame(
-    plate.rot = x$plate.rot,
-    lat = lat.eq,
-    lon = lon.eq,
-    angle = angle.eq,
-    plate.fix = fixed
-  )
-  return(x.eq)
+  return(tectonicr::euler_from_rot(ROT0tx))
 }
 
 
 #' @title Equivalent rotations of different reference system
-#' @description Transform a sequence of rotations with different reference
+#' @description Transforms a sequence of rotations with different reference
 #' systems into one with a common reference system
 #' @param x sequence of plate rotations. An object of \code{"data.frame"}, \code{"tibble"}, or \code{"matrix"}
 #' @param fixed ID of fixed plate. Must be same object class as x
 #' @return sequence of plate rotations. Same object class as x
 #' @importFrom dplyr %>% mutate
+#' @importFrom tectonicr equivalent_rotation
 #' @export
 #' @seealso \code{\link{check.finite}}, \code{\link{check.stage}}
 #' @examples
@@ -586,7 +529,7 @@ equivalent_rotations <- function(x, fixed) {
   for (i in v) {
     x.age <- subset(x.compl, x.compl$age == i)
     if (nrow(x.age) > 1) {
-      x.age.eq <- equivalent_rotation(x.age, fixed) %>%
+      x.age.eq <- tectonicr::equivalent_rotation(x.age, fixed) %>%
         dplyr::mutate(age = i, cmt = paste0(x.age$cmt, "_+_transformed"))
       x.eq <- rbind(x.eq, x.age.eq)
     }
@@ -681,7 +624,7 @@ grid_points <- function(gridsize, lat.lim, lon.lim){
 #' @param lat.lim vector, range of latitudes
 #' @param lon.lim vector, range of longitudes
 #' @return data.frame with plate motion direction at grid point
-#' @importFrom PlateTectonicStressR get_azimuth abs_vel
+#' @importFrom tectonicr get_azimuth abs_vel
 #' @export
 #' @examples
 #' data(pangea)
@@ -693,7 +636,7 @@ plate_motion_grid <- function(euler, gridsize = 5, lat.lim = c(-90, 90), lon.lim
 
   for(i in 1:nrow(grid)){
     grid$azimuth[i] <- (
-      PlateTectonicStressR::get_azimuth(
+      tectonicr::get_azimuth(
         c(grid$lat[i], grid$lon[i]),
         c(euler$lat[1], euler$lon[1])) - 90
       ) %% 180
@@ -704,7 +647,7 @@ plate_motion_grid <- function(euler, gridsize = 5, lat.lim = c(-90, 90), lon.lim
       )
 
     if(!is.null(euler$angle)){
-      grid$velocity.abs[i] <- PlateTectonicStressR::abs_vel(euler$angle[1], grid$sm[i])
+      grid$velocity.abs[i] <- tectonicr::abs_vel(euler$angle[1], grid$sm[i])
       #grid$velocity.rel[i] <- pracma::rad2deg(grid$velocity.abs[i] / (r * pracma::sind(grid$sm[i])))
     }
   }
