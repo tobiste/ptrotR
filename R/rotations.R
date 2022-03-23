@@ -77,9 +77,9 @@ rotation <- function(x, n, alpha) {
 #' tokyo <- c(35.7, 139.767)
 #' orthodrome(berlin, tokyo)
 orthodrome <- function(a, b){
-  delta <- tectonicr::acosd(
-    tectonicr::sind(a[1]) * tectonicr::sind(b[1]) +
-      tectonicr::cosd(a[1]) * tectonicr::cosd(b[1]) * tectonicr::cosd(b[2]-a[2])
+  delta <- tectonicr:::acosd(
+    tectonicr:::sind(a[1]) * tectonicr:::sind(b[1]) +
+      tectonicr:::cosd(a[1]) * tectonicr:::cosd(b[1]) * tectonicr:::cosd(b[2]-a[2])
   )
   return(delta)
 }
