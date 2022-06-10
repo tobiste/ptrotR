@@ -16,6 +16,6 @@ Object of class \code{"euler.pole"}
 Euler pole on the other side of the hemisphere
 }
 \examples{
-euler.pole <- euler_pole(90, 0)
+euler.pole <- c(90, 0)
 antipodal_euler_pole(euler.pole)
 }

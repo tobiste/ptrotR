@@ -116,19 +116,23 @@ read.gplates <- function(x, ...) {
   return(data)
 }
 
-
+eulerpole_2_eulervec <- function(x){
+  v <- c(x$x, x$y, x$z, tectonicr::deg2rad(x$angle))
+  class(v) <- append(class(v), "euler")
+  return(v)
+}
 
 #' @title Stage rotation extraction
 #' @description extract stage rotation of two finite rotations
 #' @param a1 rotation matrix of finite rotation 1
 #' @param a2 rotation matrix of finite rotation 2
 #' @return list
-#' @details x must ba all equivalent total rotations.
+#' @details x must be all equivalent total rotations.
 #' @references Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
 #' @export
 #' @seealso \code{\link{extract_stage_rotations}}
 extract_stage_rotation <- function(a1, a2) {
-  a12 <- euler_from_rot(a1 %*% solve(a2))
+  a12 <- euler::matrix_2_angles(a1 %*% solve(a2))
   return(a12)
 }
 
@@ -153,12 +157,14 @@ extract_stage_rotations <- function(x, plate) {
   age.list <- unique(data$age)
   for (time in 2:length(age.list)) {
     rot.i <- subset(data, data$age == age.list[time - 1])
-    finite.i <-
-      tectonicr::euler_rot(tectonicr::euler_pole(rot.i$lat, rot.i$lon), rot.i$angle)
+    ep.i <- tectonicr::euler_pole(rot.i$lat, rot.i$lon, angle = rot.i$angle) %>%
+      eulerpole_2_eulervec()
+    finite.i <- euler::euler_matrix(ep.i)
 
     rot.j <- subset(data, data$age == age.list[time])
-    finite.j <-
-      tectonicr::euler_rot(tectonicr::euler_pole(rot.j$lat, rot.j$lon), rot.j$angle)
+    ep.j <- tectonicr::euler_pole(rot.j$lat, rot.j$lon, angle = rot.j$angle) %>%
+      eulerpole_2_eulervec()
+    finite.j <- euler::euler_matrix(ep.j)
 
     euler_pole_error <- NA
     ep.i <- tryCatch(
@@ -172,21 +178,21 @@ extract_stage_rotations <- function(x, plate) {
           Z = 0
         )
         psi <- 0
-        error.pole <- list(pole = pole, psi = psi)
+        error.pole <- list(pole = axis, psi = angle)
         return(error.pole)
       }
     )
 
     # all northern hemisphere poles:
-    if (ep.i$pole$lat < 0) {
-      ep.i$pole <- antipodal_euler_pole(ep.i$pole)
-      ep.i$psi <- ep.i$psi * -1
+    if (ep.i$axis[1] < 0) {
+      ep.i$axis <- antipodal_euler_pole(c(ep.i$axis[1], ep.i$axis[2]))
+      ep.i$angle <- ep.i$angle * -1
     }
 
     ep.i <- data.frame(
-      "lat" = ep.i$pole$lat,
-      "lon" = ep.i$pole$lon,
-      "angle" = ep.i$psi,
+      "lat" = ep.i$axis[1],
+      "lon" = ep.i$axis[2],
+      "angle" = ep.i$angle,
       "max.age" = age.list[time],
       "min.age" = age.list[time - 1],
       "plate.rot" = data$plate.rot[1],
@@ -417,9 +423,9 @@ interpolate_missing_finite_poles <- function(df) {
                 data.frame(
                   plate.rot = id,
                   age = missing.age,
-                  lat = z$pole$lat,
-                  lon = z$pole$lon,
-                  angle = z$psi,
+                  lat = z$axis[1],
+                  lon = z$axis[2],
+                  angle = z$angle,
                   plate.fix = fixed,
                   cmt = paste0(
                     "inteprolated_between_", older.age, "_Ma_and_",
@@ -481,25 +487,33 @@ finite_pole_interpolation <- function(rot1, rot2, tx) {
 
   # rotation matrix for rotation from t=0 to t=1
   ROT_t01 <-
-    tectonicr::euler_rot(tectonicr::euler_pole(rot1$lat, rot1$lon), psi = rot1$angle)
+    euler::euler_matrix(tectonicr::euler_pole(rot1$lat, rot1$lon, angle = rot1$angle) %>%
+                          eulerpole_2_eulervec()
+                        )
 
   # rotation matrix for rotation from t=0 to t=2
   ROT_t02 <-
-    tectonicr::euler_rot(tectonicr::euler_pole(rot2$lat, rot2$lon), psi = rot2$angle)
+    euler::euler_matrix(tectonicr::euler_pole(rot2$lat, rot2$lon, angle = rot2$angle) %>%
+                          eulerpole_2_eulervec()
+                        )
 
   # stage pole between rot1 and rot2
   rot12 <- extract_stage_rotation(ROT_t02, ROT_t01)
 
   # rotation matrix for rotation from t=1 to t=tx
   ROT_t1x <-
-    euler_rot(
-      rot12$pole,
-      rot12$psi / (rot2$age - rot1$age) * (rot2$age - tx)
+    euler::euler_matrix(
+      tectonicr::euler_pole(
+        rot12$axis[1],
+        rot12$axis[2],
+        angle = rot12$angle / (rot2$age - rot1$age) * (rot2$age - tx)
+        ) %>%
+        eulerpole_2_eulervec()
     )
 
   # intermediate finite rotation is rotation composition of rot1 and stage rotation rot12
   ROT0tx <- ROT_t1x %*% ROT_t01
-  return(tectonicr::euler_from_rot(ROT0tx))
+  return(euler::matrix_2_angles(ROT0tx))
 }
 
 
@@ -540,7 +554,7 @@ equivalent_rotations <- function(x, fixed) {
 
 #' @title Euler pole migration rate
 #' @description Calculates the velocity and magnitude of a migrating Euler pole from a sequence of stage rotations
-#' @param x  data.frame. Sequence of stage rotations
+#' @param x data.frame. Sequence of stage rotations
 #' @return data.frame
 #' @importFrom dplyr "%>%" first mutate lag group_by
 #' @export
@@ -566,10 +580,10 @@ eulerpole_migration <- function(x) {
           greatcircle_distance(c(df.p$lat[i], df.p$lon[i]), c(df.p$lat[i + 1], df.p$lon[i +
                                                                                 1]))
         antipodal <-
-          antipodal_euler_pole(euler_pole(df.p$lat[i + 1], df.p$lon[i + 1]))
+          antipodal_euler_pole(c(df.p$lat[i + 1], df.p$lon[i + 1]))
         ep.jump.p2 <-
           greatcircle_distance(c(df.p$lat[i], df.p$lon[i]),
-                     c(antipodal$lat, antipodal$lon))
+                     c(antipodal[1], antipodal[2]))
         df.p$ep.migration[i] <-
           ifelse(ep.jump.p1 <= ep.jump.p2, ep.jump.p1, ep.jump.p2)
         df.p$ep.migration.vel[i] <- df.p$ep.migration[i] / t[i]

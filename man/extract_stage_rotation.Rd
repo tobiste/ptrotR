@@ -18,7 +18,7 @@ list
 extract stage rotation of two finite rotations
 }
 \details{
-x must ba all equivalent total rotations.
+x must be all equivalent total rotations.
 }
 \references{
 Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5

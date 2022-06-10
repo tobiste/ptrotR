@@ -4,14 +4,14 @@
 \alias{euler_rotation}
 \title{Euler rotation}
 \usage{
-euler_rotation(ep, psi, x)
+euler_rotation(ep, x)
 }
 \arguments{
 \item{ep}{Euler pole object}
 
-\item{psi}{Angle of rotation in degree}
-
 \item{x}{Point to be rotated. Two-column Vector with  latitude and longitude}
+
+\item{psi}{Angle of rotation in degree}
 }
 \value{
 latitude and longitude of rotated vector
@@ -20,6 +20,6 @@ latitude and longitude of rotated vector
 Performs a Euler rotation of a vector
 }
 \examples{
-euler.pole <- euler_pole(90, 0)
-euler_rotation(euler.pole, psi = 45, x = c(45, 45))
+euler.pole <- tectonicr::euler_pole(90, 0, angle = 45)
+euler_rotation(euler.pole, x = c(45, 45))
 }

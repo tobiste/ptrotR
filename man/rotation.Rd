@@ -4,7 +4,7 @@
 \alias{rotation}
 \title{Rotation}
 \usage{
-rotation(x, n, alpha)
+rotation(x, n)
 }
 \arguments{
 \item{x}{vector in cartesian coordinates}

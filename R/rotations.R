@@ -5,13 +5,12 @@
 #' @importFrom tectonicr longitude_modulo euler_pole
 #' @export
 #' @examples
-#' euler.pole <- euler_pole(90, 0)
+#' euler.pole <- c(90, 0)
 #' antipodal_euler_pole(euler.pole)
 antipodal_euler_pole <- function(x) {
-  lat.inv <- -x$lat
-  lon.inv <- tectonicr::longitude_modulo(x$lon + 180)
-  ep.inv <- tectonicr::euler_pole(lat.inv, lon.inv)
-  return(ep.inv)
+  lat.inv <- -x[1]
+  lon.inv <- tectonicr::longitude_modulo(x[2] + 180)
+  c(lat.inv, lon.inv)
 }
 
 
@@ -24,29 +23,15 @@ antipodal_euler_pole <- function(x) {
 #' @export
 #' @importFrom tectonicr cartesian_to_geographical geographical_to_cartesian
 #' @examples
-#' euler.pole <- euler_pole(90, 0)
-#' euler_rotation(euler.pole, psi = 45, x = c(45, 45))
-euler_rotation <- function(ep, psi, x) {
+#' euler.pole <- tectonicr::euler_pole(90, 0, angle = 45)
+#' euler_rotation(euler.pole, x = c(45, 45))
+euler_rotation <- function(ep, x) {
   x.rot <-
     tectonicr::cartesian_to_geographical(
-      tectonicr::euler_rot(ep, psi) %*% tectonicr::geographical_to_cartesian(x)
+      euler::euler_matrix(ep %>% eulerpole_2_eulervec()) %*% tectonicr::geographical_to_cartesian(x)
     )
   return(x.rot)
 }
-
-
-#' @title Normalization of a vector
-#' @description normalizes a vector to unit length
-#' @param v vector
-#' @return normalized vector
-#' @export
-#' @seealso \code{\link[ppls]{normalize.vector}}
-#' @examples
-#' normalize_vector(1:5)
-normalize_vector <- function(v) {
-  v / sqrt(sum(v^2))
-}
-
 
 #' @title Rotation
 #' @description Rotates a vector around an axis and an angle
@@ -56,10 +41,10 @@ normalize_vector <- function(v) {
 #' @details Rotation of a vector is the dot product of the rotation matrix and
 #' the vector
 #' @return rotated vector in cartesian coordinates
-#' @importFrom tectonicr rotation_matrix
+#' @importFrom euler rotation_matrix
 #' @export
-rotation <- function(x, n, alpha) {
-  c(tectonicr::rotation_matrix(n, alpha) %*% x)
+rotation <- function(x, n) {
+  c(euler::rotation_matrix(n) %*% x)
 }
 
 
