@@ -29,11 +29,11 @@ on a circle.
 \examples{
 values <- c(55, 355)
 coords <- data.frame(lon = c(1, 2), lat = c(1, 2))
-sp::coordinates(coords) <- ~lon+lat
+sp::coordinates(coords) <- ~ lon + lat
 sp::proj4string(coords) <- "+proj=longlat +datum=WGS84"
 
 grid <- data.frame(lon = c(1, 2, 1, 2), lat = c(1, 2, 2, 1))
-sp::coordinates(grid) <- ~lon+lat
+sp::coordinates(grid) <- ~ lon + lat
 sp::proj4string(grid) <- "+proj=longlat +datum=WGS84"
 
 ## Perform the inverse distance weighted interpolation

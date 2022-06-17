@@ -10,7 +10,7 @@ rose(
   axial = FALSE,
   clockwise = TRUE,
   start = "N",
-  unit = "degree",
+  unit = c("degree", "radian"),
   sub,
   ...
 )
@@ -39,12 +39,12 @@ or "radian".}
 A window (class "owin") containing the plotted region.
 }
 \description{
-Plots a rose diagram (rose of directions), the analogue of a histogram or
-density plot for angular data.
+Plots a rose diagram (rose of directions), the analogue of a
+histogram or density plot for angular data.
 }
 \examples{
 x <- runif(100, 60, 210)
-rose(x, col="grey", axial=TRUE)
+rose(x, col = "grey", axial = TRUE)
 }
 \author{
 Copyright (C) 2021 Tobias Stephan
