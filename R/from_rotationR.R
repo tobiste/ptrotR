@@ -138,8 +138,8 @@ sf.as.data.frame <- function(x) {
 #' @export
 #' @examples
 #' x <- runif(100, 60, 210)
-#' rose(x, col = "grey", axial = TRUE)
-rose <- function(x, bins = NULL, axial = FALSE, clockwise = TRUE, start = "N", unit = c("degree", "radian"), sub, ...) {
+#' rose2(x, col = "grey", axial = TRUE)
+rose2 <- function(x, bins = NULL, axial = FALSE, clockwise = TRUE, start = "N", unit = c("degree", "radian"), sub, ...) {
   if (class(x) == "density") {
     bw <- x$bw
     spatstat.core::rose(
