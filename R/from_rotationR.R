@@ -408,4 +408,3 @@ interpolate_krige <-
     names(krige.res)[1:3] <- c("lon", "lat", "var.pred")
     return(krige.res$var.pred)
   }
-
