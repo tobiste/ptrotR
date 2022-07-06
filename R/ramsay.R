@@ -30,7 +30,6 @@ best_cone <- function(x) {
     m = ifelse(b < 0, -m, m),
     n = ifelse(c < 0, -n, n),
   )
-
   N <- nrow(x)
 
   D <- Da <- Db <- Dc <- matrix(nrow = 3, ncol = 3)
@@ -128,27 +127,21 @@ best_plane <- function(x) {
   return(tectonicr::rad2deg(-c(alpha = alpha, beta = beta, gamma = gamma, R = check)))
 }
 
-
-
-x <- rbind(
-  c(-67, -31, -71),
-  c(-62, -53, -50),
-  c(-62, -75, -34),
-  c(-58, 85, -34),
-  c(-79, 40, -52),
-  c(90, 14, -75),
-  c(80, 10, 90)
-) %>% data.frame()
-colnames(x) <- c("a", "b", "c")
-# a : angular deviation from E-W
-# b : angular deviation from N-S
-# z : angular deviation from vertical
-best_cone(x)
-best_plane(x)
-
-
-
-
+# x <- rbind(
+#   c(-67, -31, -71),
+#   c(-62, -53, -50),
+#   c(-62, -75, -34),
+#   c(-58, 85, -34),
+#   c(-79, 40, -52),
+#   c(90, 14, -75),
+#   c(80, 10, 90)
+# ) %>% data.frame()
+# colnames(x) <- c("a", "b", "c")
+# # a : angular deviation from E-W
+# # b : angular deviation from N-S
+# # z : angular deviation from vertical
+# best_cone(x)
+# best_plane(x)
 
 
 #' Unimodal pole distribution
@@ -214,6 +207,8 @@ sd_pole <- function(x) {
 
 #' Spherical coordinates
 #'
+#' @param x matrix
+#'
 #' @examples
 #' x <- rbind(
 #'   c(58, 78, 35),
@@ -245,8 +240,6 @@ spherical_to_cartesian <- function(x) {
   cbind(cx, cy, cz)
 }
 
-#' @examples
-#' geographical_to_cartesian2(t(c(90, 0)))
 geographical_to_cartesian2 <- function(x) {
   stopifnot(is.numeric(x))
   x <- tectonicr::deg2rad(x)
@@ -264,9 +257,6 @@ cartesian_to_geographical2 <- function(x) {
   tectonicr::rad2deg(c(lat, lon))
 }
 
-
-#' @examples
-#' geographical_to_spherical(t(c(90, 0)))
 geographical_to_spherical <- function(x) {
   cartesian_to_spherical(
     geographical_to_cartesian2(x)
@@ -305,6 +295,8 @@ ep_from_gc <- function(x) {
 #'
 #' @param x sf object containing the points for analysis
 #' @param sm logical. Weather x are aligned on a small circle (TRUE) or great circle (FALSE)
+#' @importFrom sf st_coordinates
+#' @export
 #' @examples
 #' rmt <- data.frame(
 #'   rbind(
@@ -324,6 +316,22 @@ euler_solution <- function(x, sm = TRUE) {
     ep_from_gc(x_coords)
   }
 }
+
+
+#' Position statistics
+#' @param x matrix. containing the coordinates of various positions
+#' @export
+pole_distribution <- function(x){
+  x_sph <- geographical_to_spherical(x)
+  meanpole <- mean_pole(as.data.frame(x_sph))
+  coords <- spherical_to_geographical(t(as.matrix(meanpole)))
+  names(coords) <- c("lat", "lon")
+
+  varpole <- var_pole(as.data.frame(x_sph))
+  sdpole <- sd_pole(as.data.frame(x_sph))
+  c(coords, var = varpole, sd = sdpole)
+}
+
 
 
 

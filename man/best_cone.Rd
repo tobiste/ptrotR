@@ -7,11 +7,12 @@
 best_cone(x)
 }
 \arguments{
-\item{x}{data.frame containing the three dimensions of coordinates:
+\item{x}{data.frame containing the three dimensions of coordinates of the
+unit vectors in degree:
 \describe{
-\item{\code{a}}{angular deviation from E-W (x)}
-\item{\code{b}}{angular deviation from N-S (y)}
-\item{\code{c}}{angular deviation from vertical (z)}
+\item{\code{a}}{angular deviation from x-axis E-W horizontal}
+\item{\code{b}}{angular deviation from y-axis N-S horizontal}
+\item{\code{c}}{angular deviation from z-axis vertical}
 }}
 }
 \description{
@@ -27,8 +28,8 @@ x <- rbind(
   c(-79, 40, -52),
   c(90, 14, -75),
   c(80, 10, 90)
-  ) \%>\% data.frame()
-  colnames(x) <- c('a', 'b', 'c')
-  best_cone(x)
-  best_plane(x)
+) \%>\% data.frame()
+colnames(x) <- c("a", "b", "c")
+best_cone(x)
+best_plane(x)
 }

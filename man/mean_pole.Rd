@@ -7,11 +7,12 @@
 mean_pole(x)
 }
 \arguments{
-\item{x}{data.frame containing the three dimensions of coordinates:
+\item{x}{data.frame containing the three dimensions of coordinates of the
+unit vectors in degree:
 \describe{
-\item{\code{a}}{angular deviation from E-W (x)}
-\item{\code{b}}{angular deviation from N-S (y)}
-\item{\code{c}}{angular deviation from vertical (z)}
+\item{\code{a}}{angular deviation from x-axis E-W horizontal}
+\item{\code{b}}{angular deviation from y-axis N-S horizontal}
+\item{\code{c}}{angular deviation from z-axis vertical}
 }}
 }
 \description{
@@ -19,16 +20,16 @@ mean vector, variance and standard deviation
 }
 \examples{
 x <- rbind(
-c(58, 78, 35),
-c(47, 72, 47),
-c(57, 68, 41),
-c(56, 64, 45),
-c(52, 65, 47),
-c(61, 62, 51),
-c(55, 60, 49),
-c(61, 62, 42),
-c(68, 52, 46),
-c(42, 58, 65)
+  c(58, 78, 35),
+  c(47, 72, 47),
+  c(57, 68, 41),
+  c(56, 64, 45),
+  c(52, 65, 47),
+  c(61, 62, 51),
+  c(55, 60, 49),
+  c(61, 62, 42),
+  c(68, 52, 46),
+  c(42, 58, 65)
 ) \%>\% data.frame()
 colnames(x) <- c("a", "b", "c")
 mean_pole(x)
