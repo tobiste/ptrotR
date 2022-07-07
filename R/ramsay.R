@@ -22,31 +22,49 @@
 #' best_plane(x)
 best_cone <- function(x) {
   # x <- tectonicr::rad2deg(x)
-  x <- x %>% mutate(
+  x2 <- x %>%
+    mutate(
     l = tectonicr:::cosd(a),
     m = tectonicr:::cosd(b),
     n = tectonicr:::cosd(c),
     l = ifelse(a < 0, -l, l),
     m = ifelse(b < 0, -m, m),
     n = ifelse(c < 0, -n, n),
-  )
-  N <- nrow(x)
+
+    l2 = l^2,
+    m2 = m^2,
+
+    lm = l * m,
+    ln = l * n,
+    mn = m * n
+  ) %>%
+    summarise(
+      sum_l = sum(l),
+      sum_m = sum(m),
+      sum_n = sum(n),
+      sum_l2 = sum(l2),
+      sum_m2 = sum(m2),
+      sum_lm = sum(lm),
+      sum_ln = sum(ln),
+      sum_mn = sum(mn)
+      )
+  N <- nrow(x2)
 
   D <- Da <- Db <- Dc <- matrix(nrow = 3, ncol = 3)
-  D[1, 1] <- sum(x$l^2)
-  D[1, 2] <- D[2, 1] <- sum(x$l * x$m)
-  D[1, 3] <- D[3, 1] <- sum(x$l)
-  D[2, 2] <- sum(x$m^2)
-  D[2, 3] <- D[3, 2] <- sum(x$m)
+  D[1, 1] <- x2$sum_l2
+  D[1, 2] <- D[2, 1] <- x2$sum_lm
+  D[1, 3] <- D[3, 1] <- x2$sum_l
+  D[2, 2] <- x2$sum_m2
+  D[2, 3] <- D[3, 2] <-x2$sum_m
   D[3, 3] <- N
 
-  Da[1, 1] <- -sum(x$l * x$n)
+  Da[1, 1] <- -x2$sum_ln
   Da[1, 2] <- D[1, 2]
   Da[1, 3] <- D[1, 3]
-  Da[2, 1] <- -sum(x$m * x$n)
+  Da[2, 1] <- -x2$sum_mn
   Da[2, 2] <- D[2, 2]
   Da[2, 3] <- Da[3, 2] <- D[2, 3]
-  Da[3, 1] <- -sum(x$n)
+  Da[3, 1] <- -x2$sum_n
   Da[3, 3] <- N
 
   Db[1, 1] <- D[1, 1]
@@ -74,14 +92,14 @@ best_cone <- function(x) {
   B <- det(Db) / det(D)
   C <- det(Dc) / det(D)
 
-  gamma <- acos((1 + A^2 + B^2)^(-1 / 2)) %>% tectonicr::rad2deg()
-  alpha <- acos(A * (1 + A^2 + B^2)^(-1 / 2)) %>% tectonicr::rad2deg()
-  beta <- acos(B * (1 + A^2 + B^2)^(-1 / 2)) %>% tectonicr::rad2deg()
+  gamma <- -acos((1 + A^2 + B^2)^(-1 / 2)) %>% tectonicr::rad2deg()
+  alpha <- -acos(A * (1 + A^2 + B^2)^(-1 / 2)) %>% tectonicr::rad2deg()
+  beta <- -acos(B * (1 + A^2 + B^2)^(-1 / 2)) %>% tectonicr::rad2deg()
   K <- acos(C * (1 + A^2 + B^2)^(-1 / 2)) %>%
     tectonicr::rad2deg() %>%
     tectonicr::deviation_norm()
 
-  return(c("alpha" = -alpha, beta = -beta, gamma = -gamma, K = K))
+  return(c("alpha" = alpha+180, beta = beta, gamma = gamma, K = K))
 }
 
 #' The plane of best fit to cylindrical disposed s-plane poles
@@ -106,25 +124,40 @@ best_cone <- function(x) {
 #' colnames(x) <- c("a", "b", "c")
 #' best_plane(x)
 best_plane <- function(x) {
-  x <- x %>% mutate(
+  x2 <- x %>% mutate(
     l = tectonicr:::cosd(a),
     m = tectonicr:::cosd(b),
     n = tectonicr:::cosd(c),
     l = ifelse(a < 0, -l, l),
     m = ifelse(b < 0, -m, m),
-    n = ifelse(c < 0, -n, n)
-  )
-  A <- sum(x$l * x$m) * sum(x$m * x$n) - sum(x$l * x$n) * sum(x$m^2) / (sum(x$l^2) * sum(x$m^2) - sum(x$l * x$m)^2)
-  B <- sum(x$l * x$m) * sum(x$l * x$n) - sum(x$m * x$n) * sum(x$l^2) / (sum(x$l^2) * sum(x$m^2) - sum(x$l * x$m)^2)
+    n = ifelse(c < 0, -n, n),
 
+    l2 = l^2,
+    m2 = m^2,
+
+    lm = l * m,
+    ln = l * n,
+    mn = m * n
+  )
+  A <- sum(x2$lm) * sum(x2$mn) - sum(x2$ln) * sum(x2$m2) /
+    (sum(x2$l2) * sum(x2$m2) - sum(x2$lm)^2)
+  B <- sum(x2$lm) * sum(x2$ln) - sum(x2$mn) * sum(x2$l2) /
+    (sum(x2$l2) * sum(x2$m2) - sum(x2$lm)^2)
+ B = 0.308
   z <- 1 / sqrt((1 + A^2 + B^2))
-  gamma <- acos(z)
-  alpha <- acos(A * z)
-  beta <- acos(B * z)
+  gamma <- -acos(z)
+  alpha <- -acos(A * z)
+  beta <- -acos(B * z)
 
   check <- cos(alpha)^2 + cos(beta)^2 + cos(gamma)^2
 
-  return(tectonicr::rad2deg(-c(alpha = alpha, beta = beta, gamma = gamma, R = check)))
+  return(
+    c(
+      tectonicr::rad2deg(
+        c(alpha = alpha + pi, beta = beta, gamma = gamma)
+        ),
+      R = check)
+    )
 }
 
 # x <- rbind(
