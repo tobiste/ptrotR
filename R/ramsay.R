@@ -373,7 +373,7 @@ pole_distribution <- function(x){
 
 
 
-
+#
 # library(ggplot2)
 #
 # rmt.res <- euler_solution(rmt)
@@ -381,4 +381,5 @@ pole_distribution <- function(x){
 #
 # ggplot()+
 #   geom_sf(data = rmt) +
-#   geom_sf(data = tectonicr::eulerpole_smallcircles(ep, 50))
+#   geom_sf(data = tectonicr::eulerpole_smallcircles(ep, 50)) +
+#   coord_sf(xlim = c(sf::st_bbox(rmt)[1], sf::st_bbox(rmt)[3]), ylim = c(sf::st_bbox(rmt)[2], sf::st_bbox(rmt)[4]))
