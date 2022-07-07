@@ -177,15 +177,18 @@ best_plane <- function(x) {
 #' var_pole(x)
 #' sd_pole(x)
 mean_pole <- function(x) {
-  x <- x %>% mutate(
-    a = tectonicr::deg2rad(a),
-    b = tectonicr::deg2rad(b),
-    c = tectonicr::deg2rad(c)
+  x2 <- x %>% mutate(
+    a_rad = tectonicr::deg2rad(a),
+    b_rad = tectonicr::deg2rad(b),
+    c_rad = tectonicr::deg2rad(c),
+    cos_a = cos(a_rad),
+    cos_b = cos(b_rad),
+    cos_c = cos(c_rad)
   )
-  z <- sqrt(sum(x$a)^2 + sum(x$b)^2 + sum(x$c)^2)
-  cos_a <- sum(x$a) / z
-  cos_b <- sum(x$b) / z
-  cos_c <- sum(x$c) / z
+  z <- sqrt(sum(x2$cos_a)^2 + sum(x2$cos_b)^2 + sum(x2$cos_c)^2)
+  cos_a <- sum(x2$cos_a) / z
+  cos_b <- sum(x2$cos_b) / z
+  cos_c <- sum(x2$cos_c) / z
 
   acos(c(a = cos_a, b = cos_b, c = cos_c)) %>% tectonicr::rad2deg()
 }
@@ -319,6 +322,9 @@ euler_solution <- function(x, sm = TRUE) {
 
 
 #' Position statistics
+#'
+#' Statistics on the distribution of geographic locations
+#'
 #' @param x matrix. containing the coordinates of various positions
 #' @export
 pole_distribution <- function(x){

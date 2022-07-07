@@ -2,13 +2,13 @@
 % Please edit documentation in R/ramsay.R
 \name{pole_distribution}
 \alias{pole_distribution}
-\title{Euler pole statistics}
+\title{Position statistics}
 \usage{
 pole_distribution(x)
 }
 \arguments{
-\item{x}{matrix. containing the coordinates of the Euler pole}
+\item{x}{matrix. containing the coordinates of various positions}
 }
 \description{
-Euler pole statistics
+Statistics on the distribution of geographic locations
 }
