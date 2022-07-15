@@ -371,8 +371,6 @@ pole_distribution <- function(x){
   c(coords, var = varpole, sd = sdpole)
 }
 
-
-
 #
 # library(ggplot2)
 #
