@@ -2,7 +2,7 @@
 % Please edit documentation in R/sequences.R
 \name{finite_pole_interpolation}
 \alias{finite_pole_interpolation}
-\title{Interpolate gaps in the sequence of total reconstruction rotations}
+\title{Interpolate intermediate steps in a sequence of total reconstruction rotations}
 \usage{
 finite_pole_interpolation(rot1, rot2, tx)
 }
@@ -15,12 +15,19 @@ finite_pole_interpolation(rot1, rot2, tx)
 Must be in between \code{rot1$age} and \code{rot2$age}}
 }
 \value{
-data.frame. Sequence of total
+list. Sequence of total
 reconstruction rotations with filled gaps
 }
 \description{
-Interpolate missing rotations in a sequence of rotations with a
-different reference systems
+Interpolate intermediate rotations in a sequence of rotations with a
+common reference systems
+}
+\examples{
+x <- data.frame(plate.rot = 101, age = c(400, 530), lat = c(72.72, 68.3319), lon = c(150, 11.5198), angle = c(25.59, -31.9464), plate.fix = 301)
+finite_pole_interpolation(x[1, ], x[2, ], 410)
+
+y = data.frame(plate.rot = 101, age = c(0, 10), lat = c(90, 0), lon = c(0, 0), angle = c(1, 2), plate.fix = 301)
+finite_pole_interpolation(y[1, ], y[2, ], 9)
 }
 \references{
 Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5

@@ -117,7 +117,8 @@ read.gplates <- function(x, ...) {
 }
 
 eulerpole_2_eulervec <- function(x){
-  v <- c(x$x, x$y, x$z, tectonicr::deg2rad(x$angle))
+  v <- c(x$x, x$y, x$z, #tectonicr::deg2rad(x$angle)
+         x$angle)
   class(v) <- append(class(v), "euler")
   return(v)
 }
@@ -149,7 +150,7 @@ extract_stage_rotation <- function(a1, a2) {
 #' @seealso \code{\link{extract_stage_rotation}}, \code{\link{check.finite}}, \code{\link{check.stage}}
 #' @examples
 #' data(pangea)
-#' extract_stage_rotations(pangea, plate=103)
+#' extract_stage_rotations(pangea, plate=137)
 extract_stage_rotations <- function(x, plate) {
   check.finite(x)
 
@@ -157,42 +158,31 @@ extract_stage_rotations <- function(x, plate) {
   age.list <- unique(data$age)
   for (time in 2:length(age.list)) {
     rot.i <- subset(data, data$age == age.list[time - 1])
-    ep.i <- tectonicr::euler_pole(rot.i$lat, rot.i$lon, angle = rot.i$angle) %>%
-      eulerpole_2_eulervec()
-    finite.i <- euler::euler_matrix(ep.i)
+    ep.i <- tectonicr::euler_pole(rot.i$lat, rot.i$lon, angle = rot.i$angle) #%>%
+      #eulerpole_2_eulervec()
+    #finite.i <- euler::euler_matrix(ep.i)
 
     rot.j <- subset(data, data$age == age.list[time])
-    ep.j <- tectonicr::euler_pole(rot.j$lat, rot.j$lon, angle = rot.j$angle) %>%
-      eulerpole_2_eulervec()
-    finite.j <- euler::euler_matrix(ep.j)
+    ep.j <- tectonicr::euler_pole(rot.j$lat, rot.j$lon, angle = rot.j$angle) #%>%
+      #eulerpole_2_eulervec()
+    #finite.j <- euler::euler_matrix(ep.j)
 
-    euler_pole_error <- NA
-    ep.i <- tryCatch(
-      expr = extract_stage_rotation(finite.j, finite.i),
-      error = function(cond) {
-        pole <- data.frame(
-          lat = 0,
-          lon = 0,
-          X = 0,
-          Y = 0,
-          Z = 0
-        )
-        psi <- 0
-        error.pole <- list(pole = axis, psi = angle)
-        return(error.pole)
-      }
-    )
-
-    # all northern hemisphere poles:
-    if (ep.i$axis[1] < 0) {
-      ep.i$axis <- antipodal_euler_pole(c(ep.i$axis[1], ep.i$axis[2]))
-      ep.i$angle <- ep.i$angle * -1
+    ep.ij <- tectonicr::relative_rotation(ep.i, ep.j)
+    if(is.nan(ep.ij$axis[1])){
+      ep.ij$axis <- c(90, 0)
+      ep.ij$angle <- 0
     }
 
-    ep.i <- data.frame(
-      "lat" = ep.i$axis[1],
-      "lon" = ep.i$axis[2],
-      "angle" = ep.i$angle,
+    # all northern hemisphere poles:
+    if (ep.ij$axis[1] < 0) {
+      ep.ij$axis <- antipodal_euler_pole(c(ep.ij$axis[1], ep.ij$axis[2]))
+      ep.ij$angle <- -ep.ij$angle
+    }
+
+    ep.ij <- data.frame(
+      "lat" = ep.ij$axis[1],
+      "lon" = ep.ij$axis[2],
+      "angle" = ep.ij$angle,
       "max.age" = age.list[time],
       "min.age" = age.list[time - 1],
       "plate.rot" = data$plate.rot[1],
@@ -200,9 +190,9 @@ extract_stage_rotations <- function(x, plate) {
     )
 
     if (time == 2) {
-      stage_poles <- ep.i
+      stage_poles <- ep.ij
     } else {
-      stage_poles <- rbind(stage_poles, ep.i)
+      stage_poles <- rbind(stage_poles, ep.ij)
     }
   }
 
@@ -446,19 +436,28 @@ interpolate_missing_finite_poles <- function(df) {
 }
 
 
-#' @title Interpolate gaps in the sequence of total reconstruction rotations
-#' @description Interpolate missing rotations in a sequence of rotations with a
-#' different reference systems
+#' @title Interpolate intermediate steps in a sequence of total reconstruction rotations
+#' @description Interpolate intermediate rotations in a sequence of rotations with a
+#' common reference systems
 #' @param rot1 data.frame
 #' @param rot2 data.frame. Must have the same fixed plate as rot1
 #' @param tx number. Age of the requested intermediate finite rotation
 #' Must be in between \code{rot1$age} and \code{rot2$age}
-#' @return data.frame. Sequence of total
+#' @return list. Sequence of total
 #' reconstruction rotations with filled gaps
 #' @references Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
 #' @export
 #' @seealso \code{\link{check.finite}}
 #' @importFrom dplyr between
+#' @importFrom tectonicr relative_rotation euler_pole rad2deg
+#' @importFrom euler euler_concatenation
+#' @examples
+#' x <- data.frame(plate.rot = 101, age = c(400, 530), lat = c(72.72, 68.3319), lon = c(150, 11.5198), angle = c(25.59, -31.9464), plate.fix = 301)
+#' finite_pole_interpolation(x[1, ], x[2, ], 410)
+#' finite_pole_interpolation(x[1, ], x[2, ], 430)
+#'
+#' y = data.frame(plate.rot = 101, age = c(0, 10), lat = c(90, 0), lon = c(0, 0), angle = c(1, 2), plate.fix = 301)
+#' finite_pole_interpolation(y[1, ], y[2, ], 9)
 finite_pole_interpolation <- function(rot1, rot2, tx) {
   check.finite(rot1)
   check.finite(rot2)
@@ -485,35 +484,26 @@ finite_pole_interpolation <- function(rot1, rot2, tx) {
     stop("Intermediate time lies not in between the finite rotations")
   }
 
-  # rotation matrix for rotation from t=0 to t=1
-  ROT_t01 <-
-    euler::euler_matrix(tectonicr::euler_pole(rot1$lat, rot1$lon, angle = rot1$angle) %>%
-                          eulerpole_2_eulervec()
-                        )
+  # rotation matrix for rotation from t=0 to t=1                       )
+  ROT_t01 <- tectonicr::euler_pole(rot1$lat, rot1$lon, angle = rot1$angle)
 
-  # rotation matrix for rotation from t=0 to t=2
-  ROT_t02 <-
-    euler::euler_matrix(tectonicr::euler_pole(rot2$lat, rot2$lon, angle = rot2$angle) %>%
-                          eulerpole_2_eulervec()
-                        )
+  # rotation matrix for rotation from t=0 to t=2                     )
+  ROT_t02 <- tectonicr::euler_pole(rot2$lat, rot2$lon, angle = rot2$angle)
 
   # stage pole between rot1 and rot2
-  rot12 <- extract_stage_rotation(ROT_t02, ROT_t01)
+  rot12 <- tectonicr::relative_rotation(ROT_t01,ROT_t02)
+
 
   # rotation matrix for rotation from t=1 to t=tx
-  ROT_t1x <-
-    euler::euler_matrix(
-      tectonicr::euler_pole(
-        rot12$axis[1],
-        rot12$axis[2],
-        angle = rot12$angle / (rot2$age - rot1$age) * (rot2$age - tx)
-        ) %>%
-        eulerpole_2_eulervec()
-    )
+  ROT_t1x <- tectonicr::euler_pole(
+          rot12$axis[1],
+          rot12$axis[2],
+          angle = rot12$angle / (rot2$age - rot1$age) * (tx - rot1$age)
+          )
 
   # intermediate finite rotation is rotation composition of rot1 and stage rotation rot12
-  ROT0tx <- ROT_t1x %*% ROT_t01
-  return(euler::matrix_2_angles(ROT0tx))
+  #euler::euler_concatenation(as.numeric(ROT_t1x[, 3:6]), as.numeric(ROT_t01[, 3:6]))
+  euler::euler_concatenation(as.numeric(ROT_t01[, 3:6]), as.numeric(ROT_t1x[, 3:6]))
 }
 
 

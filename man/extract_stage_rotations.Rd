@@ -23,7 +23,7 @@ x must ba all equivalent total rotations.
 }
 \examples{
 data(pangea)
-extract_stage_rotations(pangea, plate=103)
+extract_stage_rotations(pangea, plate=137)
 }
 \references{
 Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
