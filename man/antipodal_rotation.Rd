@@ -16,6 +16,6 @@ object of with same class like x
 Euler pole on the other side of the hemisphere
 }
 \examples{
-euler.pole <- data.frame(lat=c(27, -21), lon=c(17, -151), angle=c(0.4, 0.42))
+euler.pole <- data.frame(plate.rot = c("A", "B"), lat=c(27, -21), lon=c(17, -151), angle=c(0.4, 0.42), plate.fix = "C")
 antipodal_rotation(euler.pole)
 }

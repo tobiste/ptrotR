@@ -1,3 +1,36 @@
+#' @title Read GPLATES' rotation file
+#' @description Imports a sequence of of total reconstruction rotations from a
+#' GPLATES' .rot file
+#' @param x either a file name (.rot format) OR a matrix
+#' @param ... optional arguments to the read.table function
+#' @return object of class \code{"finite"}
+#' \describe{
+#'   \item{plate.rot}{ID of moving plate}
+#'   \item{lat}{Latitude of Euler pole of total reconstruction rotation}
+#'   \item{lon}{Longitude}
+#'   \item{angle}{Rotation angle in degree}
+#'   \item{plate.fix}{ID of fixed/anchored plate}
+#'   \item{cmt}{Comments}
+#' }
+#' @details The comment column (last column) must not include **white space**. Use "_" to separate words instead.
+#' @seealso \code{\link{check.finite}}
+#' @importFrom utils read.table
+#' @export
+#' @examples
+#' fname <- system.file("Pangea.rot", package="ptrotR")
+#' Pangea <- read.gplates(fname)
+#' print(Pangea)
+read.gplates <- function(x, ...) {
+  data <- utils::read.table(file = x, header = FALSE, sep = "", dec = ".")
+  colnames(data) <- c(
+    "plate.rot", "age", "lat", "lon", "angle", "plate.fix",
+    "sep", "cmt"
+  )
+  data$sep <- NULL
+
+  return(data)
+}
+
 #' @title Finite rotation object
 #'
 #' @description Check if object has columns of a finite rotation sequence
@@ -83,58 +116,89 @@ check.stage <- function(x){
 }
 
 
-#' @title Read GPLATES' rotation file
-#' @description Imports a sequence of of total reconstruction rotations from a
-#' GPLATES' .rot file
-#' @param x either a file name (.rot format) OR a matrix
-#' @param ... optional arguments to the read.table function
-#' @return object of class \code{"finite"}
-#' \describe{
-#'   \item{plate.rot}{ID of moving plate}
-#'   \item{lat}{Latitude of Euler pole of total reconstruction rotation}
-#'   \item{lon}{Longitude}
-#'   \item{angle}{Rotation angle in degree}
-#'   \item{plate.fix}{ID of fixed/anchored plate}
-#'   \item{cmt}{Comments}
-#' }
-#' @details The comment column (last column) must not include **white space**. Use "_" to separate words instead.
-#' @seealso \code{\link{check.finite}}
-#' @importFrom utils read.table
+#' @title Antipodal rotation
+#' @description Euler pole on the other side of the hemisphere
+#' @param x data.frame containing the sequence of rotations or the rotation
+#' @return object of with same class like x
+#' @importFrom tectonicr longitude_modulo
 #' @export
 #' @examples
-#' fname <- system.file("Pangea.rot", package="ptrotR")
-#' Pangea <- read.gplates(fname)
-#' print(Pangea)
-read.gplates <- function(x, ...) {
-  data <- utils::read.table(file = x, header = FALSE, sep = "", dec = ".")
-  colnames(data) <- c(
-    "plate.rot", "age", "lat", "lon", "angle", "plate.fix",
-    "sep", "cmt"
-  )
-  data$sep <- NULL
-
-  return(data)
+#' euler.pole <- data.frame(plate.rot = c("A", "B"), lat=c(27, -21), lon=c(17, -151), angle=c(0.4, 0.42), plate.fix = "C")
+#' antipodal_rotation(euler.pole)
+antipodal_rotation <- function(x) {
+  for(i in seq_along(x$lat)) {
+    x$lat[i] <- -x$lat[i]
+    x$lon[i] <- tectonicr::longitude_modulo(x$lon[i] + 180)
+    x$angle[i] <- -x$angle[i]
+  }
+  return(x)
 }
 
+
+
+#' @title Invert rotation
+#' @description Changes plate motion (A relative to B) to (B relative to A)
+#' @param x data.frame containing the sequence of rotations or the rotation
+#' @return object of with same class like x
+#' @export
+#' @seealso \code{\link{check.finite}}, \code{\link{check.stage}}
+#' @examples
+#' x <- data.frame(plate.rot = "A", lat = 10, lon = -70, angle = 20, plate.fix = "B")
+#' inverse_rotation(x)
+inverse_rotation <- function(x){
+  x.rev <- x
+  x.rev$plate.rot <- x$plate.fix
+  x.rev$plate.fix <- x$plate.rot
+  x.rev$angle <- -x$angle
+  return(x.rev)
+}
+
+
 eulerpole_2_eulervec <- function(x){
-  v <- c(x$x, x$y, x$z, #tectonicr::deg2rad(x$angle)
+  v <- c(x$x, x$y, x$z,
          x$angle)
   class(v) <- append(class(v), "euler")
   return(v)
 }
 
-#' @title Stage rotation extraction
-#' @description extract stage rotation of two finite rotations
-#' @param a1 rotation matrix of finite rotation 1
-#' @param a2 rotation matrix of finite rotation 2
+inv_euler <- function(x){
+  x[4] <- -x[4]
+  return(x)
+}
+
+
+#' @title Stage rotation extraction of rotation matrices
+#' @description extract stage rotation of two finite rotation matrices
+#' @param a1,a2 rotation matrix of finite rotations (t(a2)<t(a1))
 #' @return list
 #' @details x must be all equivalent total rotations.
 #' @references Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
 #' @export
-#' @seealso \code{\link{extract_stage_rotations}}
-extract_stage_rotation <- function(a1, a2) {
+#' @seealso \code{\link{extract_stage_rotations}}, \code{\link{extract_stage_rotation}}
+extract_stage_rotation_matrix <- function(a1, a2) {
   a12 <- euler::matrix_2_angles(a1 %*% solve(a2))
   return(a12)
+}
+
+#' @title Stage rotation extraction of rotations
+#' @description extract stage rotation of two finite rotations
+#' @param r1,r2 rotation matrix of finite rotations (t(r1)<t(r2))
+#' @return list
+#' @details x must be all equivalent total rotations.
+#' @references
+#' Schaeben, H., Kroner, U. and Stephan, T. (2021). Euler Poles of Tectonic
+#' Plates. In B. S. Daza Sagar, Q. Cheng, J. McKinley and F. Agterberg (Eds.),
+#' *Encyclopedia of Mathematical Geosciences. Encyclopedia of Earth Sciences Series*
+#' (pp. 1--7). Springer Nature Switzerland AG 2021.
+#' \doi{10.1007/978-3-030-26050-7_435-1}
+#' @seealso \code{\link{extract_stage_rotations}}, \code{\link{extract_stage_rotation_matrix}}
+#' @examples
+#' x <- data.frame(plate.rot = 101, age = c(400, 530), lat = c(72.72, 68.3319), lon = c(150, 11.5198), angle = c(25.59, -31.9464), plate.fix = 301)
+#' extract_stage_rotation(x[1,], x[2, ])
+extract_stage_rotation <- function(r1, r2){
+  r01 <- euler::to_euler(c(r1$lat, r1$lon, r1$angle))
+  r02 <- euler::to_euler(c(r2$lat, r2$lon, r2$angle))
+  euler::relative_euler_schaeben2(r01, r02)
 }
 
 
@@ -158,16 +222,8 @@ extract_stage_rotations <- function(x, plate) {
   age.list <- unique(data$age)
   for (time in 2:length(age.list)) {
     rot.i <- subset(data, data$age == age.list[time - 1])
-    ep.i <- tectonicr::euler_pole(rot.i$lat, rot.i$lon, angle = rot.i$angle) #%>%
-      #eulerpole_2_eulervec()
-    #finite.i <- euler::euler_matrix(ep.i)
-
     rot.j <- subset(data, data$age == age.list[time])
-    ep.j <- tectonicr::euler_pole(rot.j$lat, rot.j$lon, angle = rot.j$angle) #%>%
-      #eulerpole_2_eulervec()
-    #finite.j <- euler::euler_matrix(ep.j)
-
-    ep.ij <- tectonicr::relative_rotation(ep.i, ep.j)
+    ep.ij <- extract_stage_rotation(rot.i, rot.j)
     if(is.nan(ep.ij$axis[1])){
       ep.ij$axis <- c(90, 0)
       ep.ij$angle <- 0
@@ -200,9 +256,7 @@ extract_stage_rotations <- function(x, plate) {
 }
 
 
-
-
-#' @title Find missing rotations in a rotatin sequence
+#' @title Find missing rotations in a rotation sequence
 #' @description Identifies gaps in a sequence of rotations with
 #' different reference systems
 #' @param x data.frame. Sequence of total
@@ -239,38 +293,6 @@ find_missing_rotations <- function(x) {
   return(missing.i)
 }
 
-
-#' @title Invert rotation
-#' @description Changes plate motion (A relative to B) to (B relative to A)
-#' @param x data.frame containing the sequence of rotations or the rotation
-#' @return object of with same class like x
-#' @export
-#' @seealso \code{\link{check.finite}}, \code{\link{check.stage}}
-inverse_rotation <- function(x){
-  x.rev <- x
-  x.rev$plate.rot <- x$plate.fix
-  x.rev$plate.fix <- x$plate.rot
-  x.rev$angle <- -x$angle
-  return(x.rev)
-}
-
-#' @title Antipodal rotation
-#' @description Euler pole on the other side of the hemisphere
-#' @param x data.frame containing the sequence of rotations or the rotation
-#' @return object of with same class like x
-#' @importFrom tectonicr longitude_modulo
-#' @export
-#' @examples
-#' euler.pole <- data.frame(lat=c(27, -21), lon=c(17, -151), angle=c(0.4, 0.42))
-#' antipodal_rotation(euler.pole)
-antipodal_rotation <- function(x) {
-  for(i in seq_along(x$lat)) {
-  x$lat[i] <- -x$lat[i]
-  x$lon[i] <- tectonicr::longitude_modulo(x$lon[i] + 180)
-  x$angle[i] <- -x$angle[i]
-  }
-  return(x)
-}
 
 
 
@@ -436,12 +458,10 @@ interpolate_missing_finite_poles <- function(df) {
 }
 
 
-#' @title Interpolate intermediate steps in a sequence of total reconstruction rotations
-#' @description Interpolate intermediate rotations in a sequence of rotations with a
-#' common reference systems
-#' @param rot1 data.frame
-#' @param rot2 data.frame. Must have the same fixed plate as rot1
-#' @param tx number. Age of the requested intermediate finite rotation
+#' @title Interpolate interjacent rotation between two total reconstruction rotations
+#'
+#' @param rot1,rot2 data.frame. \code{rot1$age} < \code{rot2$age}. Both have same fixed plate.
+#' @param tx number. Age of the desired interjacent finite rotation
 #' Must be in between \code{rot1$age} and \code{rot2$age}
 #' @return list. Sequence of total
 #' reconstruction rotations with filled gaps
@@ -455,6 +475,7 @@ interpolate_missing_finite_poles <- function(df) {
 #' x <- data.frame(plate.rot = 101, age = c(400, 530), lat = c(72.72, 68.3319), lon = c(150, 11.5198), angle = c(25.59, -31.9464), plate.fix = 301)
 #' finite_pole_interpolation(x[1, ], x[2, ], 410)
 #' finite_pole_interpolation(x[1, ], x[2, ], 430)
+#' all.equal(finite_pole_interpolation(x[1, ], x[2, ], 430), finite_pole_interpolation(x[2, ], x[1, ], 430)) # mixing up the inputs doesn't matter!
 #'
 #' y = data.frame(plate.rot = 101, age = c(0, 10), lat = c(90, 0), lon = c(0, 0), angle = c(1, 2), plate.fix = 301)
 #' finite_pole_interpolation(y[1, ], y[2, ], 9)
@@ -481,30 +502,28 @@ finite_pole_interpolation <- function(rot1, rot2, tx) {
   }
 
   if (!dplyr::between(tx, rot1$age, rot2$age)) {
-    stop("Intermediate time lies not in between the finite rotations")
+    stop("Interjacent time lies not in between the finite rotations")
   }
 
-  # rotation matrix for rotation from t=0 to t=1                       )
-  ROT_t01 <- tectonicr::euler_pole(rot1$lat, rot1$lon, angle = rot1$angle)
+  # rotation from t=0 to t=1
+  ROT_t01 <- euler::to_euler(c(rot1$lat, rot1$lon, rot1$angle))
 
-  # rotation matrix for rotation from t=0 to t=2                     )
-  ROT_t02 <- tectonicr::euler_pole(rot2$lat, rot2$lon, angle = rot2$angle)
+  # rotation from t=0 to t=2
+  ROT_t02 <- euler::to_euler(c(rot2$lat, rot2$lon, rot2$angle))
 
   # stage pole between rot1 and rot2
-  rot12 <- tectonicr::relative_rotation(ROT_t01,ROT_t02)
+  rot12 <- euler::relative_euler_schaeben2(ROT_t02, ROT_t01) # R01 * (R02)^-1
 
-
-  # rotation matrix for rotation from t=1 to t=tx
-  ROT_t1x <- tectonicr::euler_pole(
+  # rotation from t=1 to t=tx
+  ROT_t1x <- euler::to_euler(c(
           rot12$axis[1],
           rot12$axis[2],
-          angle = rot12$angle / (rot2$age - rot1$age) * (tx - rot1$age)
-          )
+          rot12$angle / (rot2$age - rot1$age) * (tx - rot1$age)
+          ))
 
-  # intermediate finite rotation is rotation composition of rot1 and stage rotation rot12
-  #euler::euler_concatenation(as.numeric(ROT_t1x[, 3:6]), as.numeric(ROT_t01[, 3:6]))
-  euler::euler_concatenation(as.numeric(ROT_t01[, 3:6]), as.numeric(ROT_t1x[, 3:6]))
-}
+  # interjacent finite rotation is rotation composition of rot1 and stage rotation rot12
+  euler::euler_concatenation(ROT_t01, inv_euler(ROT_t1x)) # (R1x)^-1 * R01
+  }
 
 
 #' @title Equivalent rotations of different reference system
@@ -657,4 +676,3 @@ plate_motion_grid <- function(euler, gridsize = 5, lat.lim = c(-90, 90), lon.lim
   }
   return(grid)
 }
-

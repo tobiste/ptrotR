@@ -2,7 +2,7 @@
 % Please edit documentation in R/sequences.R
 \name{find_missing_rotations}
 \alias{find_missing_rotations}
-\title{Find missing rotations in a rotatin sequence}
+\title{Find missing rotations in a rotation sequence}
 \usage{
 find_missing_rotations(x)
 }

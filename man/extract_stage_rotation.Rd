@@ -2,14 +2,12 @@
 % Please edit documentation in R/sequences.R
 \name{extract_stage_rotation}
 \alias{extract_stage_rotation}
-\title{Stage rotation extraction}
+\title{Stage rotation extraction of rotations}
 \usage{
-extract_stage_rotation(a1, a2)
+extract_stage_rotation(r1, r2)
 }
 \arguments{
-\item{a1}{rotation matrix of finite rotation 1}
-
-\item{a2}{rotation matrix of finite rotation 2}
+\item{r1, r2}{rotation matrix of finite rotations (t(r1)<t(r2))}
 }
 \value{
 list
@@ -20,9 +18,17 @@ extract stage rotation of two finite rotations
 \details{
 x must be all equivalent total rotations.
 }
+\examples{
+x <- data.frame(plate.rot = 101, age = c(400, 530), lat = c(72.72, 68.3319), lon = c(150, 11.5198), angle = c(25.59, -31.9464), plate.fix = 301)
+extract_stage_rotation(x[1,], x[2, ])
+}
 \references{
-Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
+Schaeben, H., Kroner, U. and Stephan, T. (2021). Euler Poles of Tectonic
+Plates. In B. S. Daza Sagar, Q. Cheng, J. McKinley and F. Agterberg (Eds.),
+*Encyclopedia of Mathematical Geosciences. Encyclopedia of Earth Sciences Series*
+(pp. 1--7). Springer Nature Switzerland AG 2021.
+\doi{10.1007/978-3-030-26050-7_435-1}
 }
 \seealso{
-\code{\link{extract_stage_rotations}}
+\code{\link{extract_stage_rotations}}, \code{\link{extract_stage_rotation_matrix}}
 }

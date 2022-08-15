@@ -2,16 +2,14 @@
 % Please edit documentation in R/sequences.R
 \name{finite_pole_interpolation}
 \alias{finite_pole_interpolation}
-\title{Interpolate intermediate steps in a sequence of total reconstruction rotations}
+\title{Interpolate interjacent rotation between two total reconstruction rotations}
 \usage{
 finite_pole_interpolation(rot1, rot2, tx)
 }
 \arguments{
-\item{rot1}{data.frame}
+\item{rot1, rot2}{data.frame. \code{rot1$age} < \code{rot2$age}. Both have same fixed plate.}
 
-\item{rot2}{data.frame. Must have the same fixed plate as rot1}
-
-\item{tx}{number. Age of the requested intermediate finite rotation
+\item{tx}{number. Age of the desired interjacent finite rotation
 Must be in between \code{rot1$age} and \code{rot2$age}}
 }
 \value{
@@ -19,12 +17,13 @@ list. Sequence of total
 reconstruction rotations with filled gaps
 }
 \description{
-Interpolate intermediate rotations in a sequence of rotations with a
-common reference systems
+Interpolate interjacent rotation between two total reconstruction rotations
 }
 \examples{
 x <- data.frame(plate.rot = 101, age = c(400, 530), lat = c(72.72, 68.3319), lon = c(150, 11.5198), angle = c(25.59, -31.9464), plate.fix = 301)
 finite_pole_interpolation(x[1, ], x[2, ], 410)
+finite_pole_interpolation(x[1, ], x[2, ], 430)
+all.equal(finite_pole_interpolation(x[1, ], x[2, ], 430), finite_pole_interpolation(x[2, ], x[1, ], 430)) # mixing up the inputs doesn't matter!
 
 y = data.frame(plate.rot = 101, age = c(0, 10), lat = c(90, 0), lon = c(0, 0), angle = c(1, 2), plate.fix = 301)
 finite_pole_interpolation(y[1, ], y[2, ], 9)

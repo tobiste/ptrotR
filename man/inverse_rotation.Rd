@@ -15,6 +15,10 @@ object of with same class like x
 \description{
 Changes plate motion (A relative to B) to (B relative to A)
 }
+\examples{
+x <- data.frame(plate.rot = "A", lat = 10, lon = -70, angle = 20, plate.fix = "B")
+inverse_rotation(x)
+}
 \seealso{
 \code{\link{check.finite}}, \code{\link{check.stage}}
 }
