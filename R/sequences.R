@@ -198,7 +198,7 @@ extract_stage_rotation_matrix <- function(a1, a2) {
 extract_stage_rotation <- function(r1, r2){
   r01 <- euler::to_euler(c(r1$lat, r1$lon, r1$angle))
   r02 <- euler::to_euler(c(r2$lat, r2$lon, r2$angle))
-  euler::relative_euler_schaeben2(r01, r02)
+  euler::relative_euler_schaeben2(r01, r02) # R12 = R02 * (R01)^-1
 }
 
 
