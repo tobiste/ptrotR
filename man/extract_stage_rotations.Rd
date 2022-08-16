@@ -12,7 +12,7 @@ extract_stage_rotations(x, plate)
 \item{plate}{ID of plate}
 }
 \value{
-data.frame. Sequence of stage rotations
+data.frame. Sequence of stage rotations. Rotation is given as the rotation from an older to a younger past position.
 }
 \description{
 extract all stage rotations from a sequence of  total

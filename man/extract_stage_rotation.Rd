@@ -2,21 +2,23 @@
 % Please edit documentation in R/sequences.R
 \name{extract_stage_rotation}
 \alias{extract_stage_rotation}
-\title{Stage rotation extraction of rotations}
+\title{Stage rotation}
 \usage{
 extract_stage_rotation(r1, r2)
 }
 \arguments{
-\item{r1, r2}{rotation matrix of finite rotations (t(r1)<t(r2))}
+\item{r1, r2}{Rotation parameters of two total reconstruction rotations. Both rotations must have the same "fixed" plate.}
 }
 \value{
-list
+list. Rotation is given as the rotation from an older to a younger past position.
 }
 \description{
-extract stage rotation of two finite rotations
+Extracts stage rotation between two total reconstruction rotations
 }
 \details{
-x must be all equivalent total rotations.
+\deqn{
+R_{[t_2, t_1]} = R_{[t_1, t_2]}^{-1} = R_{[t_0, t_2]} R_{[t_0, t_1]}^{-1}
+}
 }
 \examples{
 x <- data.frame(plate.rot = 101, age = c(400, 530), lat = c(72.72, 68.3319), lon = c(150, 11.5198), angle = c(25.59, -31.9464), plate.fix = 301)

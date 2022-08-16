@@ -180,11 +180,13 @@ extract_stage_rotation_matrix <- function(a1, a2) {
   return(a12)
 }
 
-#' @title Stage rotation extraction of rotations
-#' @description extract stage rotation of two finite rotations
-#' @param r1,r2 rotation matrix of finite rotations (t(r1)<t(r2))
-#' @return list
-#' @details x must be all equivalent total rotations.
+#' @title Stage rotation
+#' @description Extracts stage rotation between two total reconstruction rotations
+#' @param r1,r2 Rotation parameters of two total reconstruction rotations. Both rotations must have the same "fixed" plate.
+#' @return list. Rotation is given as the rotation from the older to the younger position.
+#' @details \deqn{
+#' R_{[t_2, t_1]} = R_{[t_1, t_2]}^{-1} = R_{[t_0, t_2]} R_{[t_0, t_1]}^{-1}
+#' }
 #' @references
 #' Schaeben, H., Kroner, U. and Stephan, T. (2021). Euler Poles of Tectonic
 #' Plates. In B. S. Daza Sagar, Q. Cheng, J. McKinley and F. Agterberg (Eds.),
@@ -207,7 +209,7 @@ extract_stage_rotation <- function(r1, r2){
 #' reconstruction rotations
 #' @param x data.frame. Sequence of total reconstruction rotations
 #' @param plate ID of plate
-#' @return data.frame. Sequence of stage rotations
+#' @return data.frame. Sequence of stage rotations. Rotation is given as the rotation from an older to a younger past position.
 #' @details x must ba all equivalent total rotations.
 #' @references Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
 #' @export
