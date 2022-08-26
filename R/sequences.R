@@ -648,7 +648,8 @@ grid_points <- function(gridsize, lat.lim, lon.lim){
 #' @param gridsize  grid size in degree
 #' @param lat.lim vector, range of latitudes
 #' @param lon.lim vector, range of longitudes
-#' @return data.frame with plate motion direction at grid point
+#' @return data.frame with plate motion direction (degree) and velocity (km/Myr)
+#' at grid point
 #' @importFrom tectonicr get_azimuth abs_vel
 #' @export
 #' @examples

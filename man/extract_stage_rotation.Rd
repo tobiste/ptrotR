@@ -10,7 +10,7 @@ extract_stage_rotation(r1, r2)
 \item{r1, r2}{Rotation parameters of two total reconstruction rotations. Both rotations must have the same "fixed" plate.}
 }
 \value{
-list. Rotation is given as the rotation from an older to a younger past position.
+list. Rotation is given as the rotation from the older to the younger position.
 }
 \description{
 Extracts stage rotation between two total reconstruction rotations

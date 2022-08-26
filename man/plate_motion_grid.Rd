@@ -21,7 +21,8 @@ plate_motion_grid(
 \item{lon.lim}{vector, range of longitudes}
 }
 \value{
-data.frame with plate motion direction at grid point
+data.frame with plate motion direction (degree) and velocity (km/Myr)
+at grid point
 }
 \description{
 Create a grid of the plate motion direction and velocity
