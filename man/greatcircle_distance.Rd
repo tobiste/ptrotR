@@ -20,7 +20,7 @@ Distance along a great circle.
 \examples{
 berlin <- c(52.517, 13.4)
 tokyo <- c(35.7, 139.767)
-orthodrome(berlin, tokyo)
+greatcircle_distance(berlin, tokyo)
 }
 \seealso{
 \code{\link{orthodrome}}
