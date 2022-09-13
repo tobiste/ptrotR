@@ -1,5 +1,5 @@
 #' @title Example rotation file
-#' @description Sequence of total reconstruction reotations in GPLATE's .rot format
+#' @description Sequence of total reconstruction rotations in GPLATES' .rot format
 #'
 #' @docType data
 #'
@@ -13,7 +13,7 @@
 'pangea'
 
 #' @title Example rotation file
-#' @description Sequence of total reconstruction reotations in GPLATE's .rot format
+#' @description Sequence of total reconstruction rotations in GPLATES' .rot format
 #'
 #' @docType data
 #'
@@ -25,3 +25,40 @@
 #' data(pannotia)
 #' head(pannotia)
 'pannotia'
+
+
+#' Plate Boundaries of the Earth
+#'
+#' Global set of present plate boundaries on the Earth (PB2002) by Bird 2003
+#'
+#' @docType data
+#'
+#' @usage data('pb2002_boundaries')
+#'
+#' @format An object of class \code{"sf"}. LINESTRING
+#'
+#' @references  Bird, P. (2003), An updated digital model of plate boundaries,
+#' *Geochem. Geophys. Geosyst.*, 4, 1027, doi: 10.1029/2001GC000252, 3.
+#' @keywords datasets
+#' @examples
+#' data("pb2002_boundaries")
+#' head("pb2002_boundaries")
+"pb2002_boundaries"
+
+#' Plates of the Earth
+#'
+#' Global set of present plates on the Earth (PB2002) by Bird 2003
+#'
+#' @docType data
+#'
+#' @usage data('pb2002_plates')
+#'
+#' @format An object of class \code{"sf"}. MULTIPOLYGON
+#'
+#' @references  Bird, P. (2003), An updated digital model of plate boundaries,
+#' *Geochem. Geophys. Geosyst.*, 4, 1027, doi: 10.1029/2001GC000252, 3.
+#' @keywords datasets
+#' @examples
+#' data("pb2002_plates")
+#' head("pb2002_plates")
+"pb2002_plates"

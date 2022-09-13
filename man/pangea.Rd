@@ -11,7 +11,7 @@ An object of class \code{"finite"}
 data(pangea)
 }
 \description{
-Sequence of total reconstruction reotations in GPLATE's .rot format
+Sequence of total reconstruction rotations in GPLATES' .rot format
 }
 \examples{
 data(pangea)

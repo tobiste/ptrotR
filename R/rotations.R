@@ -48,14 +48,14 @@ rotation <- function(x, n) {
 }
 
 
-
-hav <- function(x){
-  sin(x/2)^2
-}
-
-ahav <- function(x){
-  2 * asin(sqrt(x))
-}
+#
+# hav <- function(x){
+#   sin(x/2)^2
+# }
+#
+# ahav <- function(x){
+#   2 * asin(sqrt(x))
+# }
 
 #' Angle along great circle on spherical surface
 #'
@@ -91,9 +91,9 @@ orthodrome_haversine2 <- function(p1, p2){
 orthodrome_haversine2_2 <- function(p1, p2){
   a <- p1 * pi / 180
   b <- p2 * pi / 180
-  havdlat <- hav(b[1]-a[1])
+  havdlat <- tectonicr:::hav(b[1]-a[1])
 
-  ahav(
+  tectonicr:::ahav(
     havdlat + (1 - havdlat - hav(b[1] + a[1])) * hav(b[2]-a[2])
   )
 }
