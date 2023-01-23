@@ -62,3 +62,69 @@
 #' data("pb2002_plates")
 #' head("pb2002_plates")
 "pb2002_plates"
+
+#' Plates of the Earth for paleogeographical reconstructions for the
+#' Pannotia-Pangea cycle
+#'
+#' Global set of plates for Pangea-Pannotia supercontinent cycle
+#'
+#' @docType data
+#'
+#' @usage data('kroner_plates')
+#'
+#' @format An object of class \code{"sf"}. MULTIPOLYGON
+#'
+#' @references <div class="csl-entry">Kroner, U., Stephan, T., Romer, R. L., &#38; Roscher, M. (2020). Paleozoic plate kinematics during the Pannotia–Pangaea supercontinent cycle. <i>Geological Society, London, Special Publications</i>, <i>503</i>, SP503-2020–15. https://doi.org/10.1144/SP503-2020-15</div>
+#' @keywords datasets
+#' @examples
+#' data("kroner_plates")
+"kroner_plates"
+
+#' Structures used for paleogeographical reconstructions of the
+#' Pannotia-Pangea cycle
+#'
+#' Global set of structures for Pangea-Pannotia supercontinent cycle
+#'
+#' @docType data
+#'
+#' @usage data('kroner_structures')
+#'
+#' @format An object of class \code{"sf"}. MULTIPOLYGON
+#'
+#' @references <div class="csl-entry">Kroner, U., Stephan, T., Romer, R. L., &#38; Roscher, M. (2020). Paleozoic plate kinematics during the Pannotia–Pangaea supercontinent cycle. <i>Geological Society, London, Special Publications</i>, <i>503</i>, SP503-2020–15. https://doi.org/10.1144/SP503-2020-15</div>
+#' @keywords datasets
+#' @examples
+#' data("kroner_structures")
+"kroner_structures"
+
+#' Coastlines used for paleogeographical reconstructions of the
+#' Pannotia-Pangea cycle
+#'
+#' Global set of coastlines for Pangea-Pannotia supercontinent cycle
+#'
+#' @docType data
+#'
+#' @usage data('kroner_coastlines')
+#'
+#' @format An object of class \code{"sf"}. MULTIPOLYGON
+#'
+#' @references <div class="csl-entry">Kroner, U., Stephan, T., Romer, R. L., &#38; Roscher, M. (2020). Paleozoic plate kinematics during the Pannotia–Pangaea supercontinent cycle. <i>Geological Society, London, Special Publications</i>, <i>503</i>, SP503-2020–15. https://doi.org/10.1144/SP503-2020-15</div>
+#' @keywords datasets
+#' @examples
+#' data("kroner_coastlines")
+"kroner_coastlines"
+
+#' Torsvik et al. 2012 APWP
+#'
+#' Torsvik et al. 2012 APWP in African coordinates
+#'
+#' @docType data
+#'
+#' @usage data('Torsvik_APWP')
+#'
+#' @format An object of class \code{"sf"}. MULTIPOLYGON
+#'
+#' @keywords datasets
+#' @examples
+#' data("Torsvik_APWP")
+"Torsvik_APWP"
