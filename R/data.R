@@ -128,3 +128,57 @@
 #' @examples
 #' data("Torsvik_APWP")
 "Torsvik_APWP"
+
+#' The rotations opening the Central and Northern Atlantic Ocean
+#'
+#' Total reconstruction rotations of Greiner and Neugebauer (2013)
+#'
+#' @docType data
+#'
+#' @usage data('greiner')
+#'
+#' @format An object of class \code{"tibble"}
+#'
+#' @keywords datasets
+#' @examples
+#' data("greiner")
+"greiner"
+
+#' ID list of plates used in GPLATES
+#'
+#' @docType data
+#'
+#' @usage data('gplates_ids')
+#'
+#' @format An object of class \code{"tibble"}
+#'
+#' @keywords datasets
+#' @examples
+#' data("gplates_ids")
+"gplates_ids"
+
+#' Rotation parameters of GPlates
+#'
+#' @docType data
+#'
+#' @usage data('gplates_rot')
+#'
+#' @format An object of class \code{"tibble"}
+#'
+#' @keywords datasets
+#' @examples
+#' data("gplates_rot")
+"gplates_rot"
+
+#' Rotation parameters from Seton et al. 2012
+#'
+#' @docType data
+#'
+#' @usage data('seton_rot')
+#'
+#' @format An object of class \code{"tibble"}
+#'
+#' @keywords datasets
+#' @examples
+#' data("seton_rot")
+"seton_rot"

@@ -132,9 +132,9 @@ sf.as.data.frame <- function(x) {
 #' counter-clockwise direction (clockwise=FALSE).
 #' @param unit The unit in which the angles are expressed. "degree" the default,
 #' or "radian".
-#' @param ... Additional arguments passed to \code{spatstat::rose()}.
+#' @param ... Additional arguments passed to [spatstat.explore::rose()].
 #' @return A window (class "owin") containing the plotted region.
-#' @importFrom spatstat.core rose
+#' @importFrom spatstat.explore rose
 #' @export
 #' @examples
 #' x <- runif(100, 60, 210)
@@ -142,7 +142,7 @@ sf.as.data.frame <- function(x) {
 rose2 <- function(x, bins = NULL, axial = FALSE, clockwise = TRUE, start = "N", unit = c("degree", "radian"), sub, ...) {
   if (class(x) == "density") {
     bw <- x$bw
-    spatstat.core::rose(
+    spatstat.explore::rose(
       x %% 360,
       clockwise = clockwise, start = start, unit = unit, ...
     )
@@ -166,7 +166,7 @@ rose2 <- function(x, bins = NULL, axial = FALSE, clockwise = TRUE, start = "N", 
       x2 <- (x + 180) %% 360
       x <- hist(x = c(x, x2), plot = FALSE, breaks = breaks)
     }
-    spatstat.core::rose(
+    spatstat.explore::rose(
       x,
       breaks = breaks,
       clockwise = clockwise, start = start, unit = unit, ...

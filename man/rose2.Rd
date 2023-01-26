@@ -33,7 +33,7 @@ counter-clockwise direction (clockwise=FALSE).}
 \item{unit}{The unit in which the angles are expressed. "degree" the default,
 or "radian".}
 
-\item{...}{Additional arguments passed to \code{spatstat::rose()}.}
+\item{...}{Additional arguments passed to [spatstat.explore::rose()].}
 }
 \value{
 A window (class "owin") containing the plotted region.

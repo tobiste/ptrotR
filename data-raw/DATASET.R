@@ -40,3 +40,37 @@ Torsvik_APWP <- sf::st_read("data-raw/Torsvik2012_apwp_grid_Africa.shp")
 plot(Torsvik_APWP)
 usethis::use_data(Torsvik_APWP, overwrite = TRUE)
 
+
+greiner <- readxl::read_xlsx("E:/UofC/plate_motion/Greiner.xlsx")
+usethis::use_data(greiner, overwrite = TRUE)
+
+gplates_ids <- readxl::read_xlsx("data-raw/Seton_etal_ESR2012_PlateIDs.xlsx") %>%
+  mutate(Plate_ID = as.integer(Plate_ID))
+usethis::use_data(gplates_ids, overwrite = TRUE)
+
+gp_cmt <- readr::read_delim("data-raw/Muller2019-Young2019-Cao2020_CombinedRotations.rot", delim  = "!", col_names  = FALSE) %>%
+  pull(X2)
+
+gplates_rot <-  readr::read_table("data-raw/Muller2019-Young2019-Cao2020_CombinedRotations.rot", comment = "!", col_names = c("plate.rot", "age", "lat", "lon", "angle", "plate.fix")) %>%
+  mutate(plate.rot = as.integer(plate.rot), plate.fix = as.numeric(plate.fix), comment = gp_cmt) %>%
+  as_tibble() %>%
+  left_join(gplates_ids, by = c("plate.rot" = "Plate_ID"), suffix = c(".rot", ".fix")) %>%
+  left_join(gplates_ids, by = c("plate.fix" = "Plate_ID"), suffix = c(".rot", ".fix")) %>%
+  tidyr::unite("rot", Abbreviation.rot,  Abbreviation.fix, sep = "-", remove = F) %>%
+  select(plate.rot, age, lat, lon, angle, plate.fix, rot, Abbreviation.rot, Name_and_Description.rot, Abbreviation.fix, Name_and_Description.fix, comment)
+  #tidyr::separate(comment, into = c("comment", "reference"), sep = "@REF") %>%
+  #tidyr::separate(reference, into = c("reference", "doi"), sep = "@DOI")
+usethis::use_data(gplates_rot, overwrite = TRUE)
+
+
+st_cmt <- readr::read_delim("data-raw/Seton_etal_ESR2012_2012.1.rot", delim  = "!", col_names  = FALSE) %>%
+  pull(X2)
+
+seton_rot = readr::read_table("data-raw/Seton_etal_ESR2012_2012.1.rot", comment = "!", col_names = c("plate.rot", "age", "lat", "lon", "angle", "plate.fix")) %>%
+  mutate(plate.rot = as.integer(plate.rot), plate.fix = as.numeric(plate.fix), comment = st_cmt) %>%
+  left_join(gplates_ids, by = c("plate.rot" = "Plate_ID"), suffix = c(".rot", ".fix")) %>%
+  left_join(gplates_ids, by = c("plate.fix" = "Plate_ID"), suffix = c(".rot", ".fix")) %>%
+  tidyr::unite("rot", Abbreviation.rot,  Abbreviation.fix, sep = "-", remove = F) %>%
+  select(plate.rot, age, lat, lon, angle, plate.fix, rot, Abbreviation.rot, Name_and_Description.rot, Abbreviation.fix, Name_and_Description.fix, comment) %>%
+  filter(plate.rot != 999)
+usethis::use_data(seton_rot, overwrite = TRUE)

@@ -208,7 +208,7 @@ extract_stage_rotation <- function(r1, r2){
 #' @description extract all stage rotations from a sequence of  total
 #' reconstruction rotations
 #' @param x data.frame. Sequence of total reconstruction rotations
-#' @param plate ID of plate
+#' @param plate ID of rotating plate
 #' @return data.frame. Sequence of stage rotations. Rotation is given as the rotation from an older to a younger past position.
 #' @details x must ba all equivalent total rotations.
 #' @references Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
@@ -223,8 +223,8 @@ extract_stage_rotations <- function(x, plate) {
   data <- subset(x, x$plate.rot == plate)
   age.list <- unique(data$age)
   for (time in 2:length(age.list)) {
-    rot.i <- subset(data, data$age == age.list[time - 1])
-    rot.j <- subset(data, data$age == age.list[time])
+    rot.i <- subset(data, data$age == age.list[time - 1]) %>% select(lat, lon, angle) %>% unique()
+    rot.j <- subset(data, data$age == age.list[time]) %>% select(lat, lon, angle) %>% unique()
     ep.ij <- extract_stage_rotation(rot.i, rot.j)
     if(is.nan(ep.ij$axis[1])){
       ep.ij$axis <- c(90, 0)
@@ -301,7 +301,7 @@ find_missing_rotations <- function(x) {
 #' @title Last finite rotation in sequence
 #' @description Adds last finite rotation in a sequence assuming that the plate motion does not change
 #' @param x data.frame. Sequence of total reconstruction rotations
-#' @return data.frame.
+#' @return data.frame
 #' @export
 #' @importFrom plyr rbind.fill
 #' @examples

@@ -10,7 +10,7 @@ add_last_finite_rotations(x)
 \item{x}{data.frame. Sequence of total reconstruction rotations}
 }
 \value{
-data.frame.
+data.frame
 }
 \description{
 Adds last finite rotation in a sequence assuming that the plate motion does not change
