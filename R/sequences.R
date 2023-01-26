@@ -31,6 +31,20 @@ read.gplates <- function(x, ...) {
   return(data)
 }
 
+write.gplates <- function(x, file, ...) {
+  x %>%
+    mutate(comment_sign = "!", rel_sign = "-") %>%
+    select(
+      plate.rot, age, lat, lon, angle, plate.fix, comment_sign, Name_and_Description.rot, rel_sign, Name_and_Description.fix, comment
+    ) %>%
+    readr::write_delim(
+      file = file,
+      delim = " ",
+      col_names = FALSE,
+      ...
+    )
+}
+
 #' @title Finite rotation object
 #'
 #' @description Check if object has columns of a finite rotation sequence
@@ -614,6 +628,96 @@ eulerpole_migration <- function(x) {
       ))
   }
   return(data2)
+}
+
+migration_path <- function(x) {
+  x.sf <- x %>%
+    mutate(x = lon, y = lat) %>%
+    arrange(N_hemisphere, min.age) %>%
+    st_as_sf(coords = c("x", "y"), agr = "constant", crs = "WGS84")
+
+  age.list <- unique(x.sf$min.age)
+
+  # migration path 1
+  x.sf.1 <- x.sf[1, ]
+
+  x.sf.2n <- filter(x.sf, min.age == age.list[2], N_hemisphere)
+  x.sf.2s <- filter(x.sf, min.age == age.list[2], !N_hemisphere)
+
+  dn <- sf::st_distance(x.sf.1, x.sf.2n)
+  ds <- sf::st_distance(x.sf.1, x.sf.2s)
+
+  if (dn > ds) {
+    x2 <- rbind(x.sf.1, x.sf.2s)
+  } else {
+    x2 <- rbind(x.sf.1, x.sf.2n)
+  }
+
+  for (j in seq_along(x.sf$min.age)) {
+    if (any(x.sf[j, ] != x.sf.1)) {
+      xj <- x2[nrow(x2), ]
+
+      nextage <- age.list[which(age.list == xj$min.age) + 1]
+
+      if (!is.na(nextage)) {
+        xkn <- filter(x.sf, min.age == nextage, N_hemisphere)
+        xks <- filter(x.sf, min.age == nextage, !N_hemisphere)
+        dn <- sf::st_distance(xj, xkn)
+        ds <- sf::st_distance(xj, xks)
+
+        if (dn > ds) {
+          x2 <- rbind(x2, xks)
+        } else {
+          x2 <- rbind(x2, xkn)
+        }
+      }
+    }
+  }
+
+  # migration path 2
+  x.sf.2 <- x.sf %>% filter(min.age == x.sf.1$min.age, N_hemisphere!=x.sf.1$N_hemisphere)
+
+  x.sf.2n <- filter(x.sf, min.age == age.list[2], N_hemisphere)
+  x.sf.2s <- filter(x.sf, min.age == age.list[2], !N_hemisphere)
+
+  dn <- sf::st_distance(x.sf.2, x.sf.2n)
+  ds <- sf::st_distance(x.sf.2, x.sf.2s)
+
+  if (dn > ds) {
+    x3 <- rbind(x.sf.2, x.sf.2s)
+  } else {
+    x3 <- rbind(x.sf.2, x.sf.2n)
+  }
+
+  for (j in seq_along(x.sf$min.age)) {
+    if (any(x.sf[j, ] != x.sf.2)) {
+      xj <- x3[nrow(x3), ]
+
+      nextage <- age.list[which(age.list == xj$min.age) + 1]
+
+      if (!is.na(nextage)) {
+        xkn <- filter(x.sf, min.age == nextage, N_hemisphere)
+        xks <- filter(x.sf, min.age == nextage, !N_hemisphere)
+        dn <- sf::st_distance(xj, xkn)
+        ds <- sf::st_distance(xj, xks)
+
+        if (dn > ds) {
+          x3 <- rbind(x3, xks)
+        } else {
+          x3 <- rbind(x3, xkn)
+        }
+      }
+    }
+  }
+
+
+  rbind(
+    x2 %>% mutate(group=1),
+    x3 %>% mutate(group=2)) %>%
+    group_by(group) %>%
+    summarise(do_union = FALSE) %>%
+    # sf::st_combine() %>%
+    st_cast("LINESTRING")
 }
 
 
