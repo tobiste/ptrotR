@@ -65,7 +65,7 @@ berlin <- c(52.52, 13.41)
 calgary <- c(51.04, -114.072)
 dist_greatcircle2(berlin, calgary)
 dist_loxodrome(berlin, calgary)
-dist_smallcircle(berlin, calgary, sm=45)
+dist_smallcircle(berlin, calgary, sm = 45)
 }
 \references{
 Imboden, C., Imboden D. (1972) Orthodromic and loxodromic formula for the
