@@ -20,10 +20,10 @@ Velocities at perpendicular along sea-floor ridge
 lat <- c(30, 18.5, 14.5, 10.8, 10.2, 9.4, 8.8, 7.6, 7.2, 4.0, 1.9, 1.1, -1.1, -0.1, -1.3, -1.9, -2.9, -7.5)
 lon <- c(-42.3, -46.8, -46, -42.3, -40.9, -40, 38.7, -36.6, -34.3, -31.9, -30.6, -26, -24, -18, -14.5, -12.9, -12.5, -12.3)
 strike <- c(99, 95, 91, 92, 94, 92, 92, 91, 91, 88, 86, 86, 81, 77, 75, 82, 73, 73)
-eplat <- 62
-eplon <- -36
+ep_lat <- 62
+ep_lon <- -36
 vmax <- 1.8 # cm/yr
-perpendicular_velocities(lat, lon, strike, eplat, eplon, vmax)
+perpendicular_velocities(lat, lon, strike, ep_lat, ep_lon, vmax)
 }
 \references{
 Morgan, W. J. (1968), Rises, trenches, great faults, and crustal blocks, J. Geophys. Res., 73( 6), 1959-1982, doi:10.1029/JB073i006p01959.

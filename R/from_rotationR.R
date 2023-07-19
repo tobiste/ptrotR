@@ -68,17 +68,20 @@ clip_eulercircles <- function(x, crop_by) {
   stopifnot(is.sp(x) | is.sf(x))
   stopifnot(is.sp(crop_by) | any(class(crop_by) == c("sf", "data.frame")))
 
+  is_sp <- FALSE
   if (is.sp(x)) {
+    is_sp <- TRUE
     x <- sf::st_as_sf(x)
   }
+
   if (is.sp(crop_by)) {
     crop_by <- sf::st_as_sf(crop_by)
   } else if (!is.sf(crop_by)) {
     crop_by <- sf::st_bbox(c(
-      xmin = min(crop_by$lon),
-      xmax = max(crop_by$lon),
-      ymin = min(crop_by$lat),
-      ymax = max(crop_by$lat)
+      xmin = min(crop_by$lon, na.rm = TRUE),
+      xmax = max(crop_by$lon, na.rm = TRUE),
+      ymin = min(crop_by$lat, na.rm = TRUE),
+      ymax = max(crop_by$lat, na.rm = TRUE)
     ),
     crs = sf::st_crs("WGS84")
     )
@@ -88,8 +91,8 @@ clip_eulercircles <- function(x, crop_by) {
   x.clipped <- sf::st_intersection(x, crop_by)
   suppressMessages(sf::sf_use_s2(TRUE))
 
-  if (is.sp(x)) {
-    x.clipped <- x.clipped %>% sf::as_Spatial()
+  if (is_sp) {
+    x.clipped <- sf::as_Spatial(x.clipped)
   }
 
   return(x.clipped)
