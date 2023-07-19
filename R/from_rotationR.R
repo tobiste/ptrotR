@@ -1,5 +1,3 @@
-
-
 #' Function to test if an R object is a Spatial* or a sf data-type.
 #'
 #' Helper functions to
@@ -77,18 +75,19 @@ clip_eulercircles <- function(x, crop_by) {
   if (is.sp(crop_by)) {
     crop_by <- sf::st_as_sf(crop_by)
   } else if (!is.sf(crop_by)) {
-    crop_by <- sf::st_bbox(c(
-      xmin = min(crop_by$lon, na.rm = TRUE),
-      xmax = max(crop_by$lon, na.rm = TRUE),
-      ymin = min(crop_by$lat, na.rm = TRUE),
-      ymax = max(crop_by$lat, na.rm = TRUE)
-    ),
-    crs = sf::st_crs("WGS84")
+    crop_by <- sf::st_bbox(
+      c(
+        xmin = min(crop_by$lon, na.rm = TRUE),
+        xmax = max(crop_by$lon, na.rm = TRUE),
+        ymin = min(crop_by$lat, na.rm = TRUE),
+        ymax = max(crop_by$lat, na.rm = TRUE)
+      ),
+      crs = sf::st_crs("WGS84")
     )
   }
 
   suppressMessages(sf::sf_use_s2(FALSE))
-  x.clipped <- sf::st_intersection(x, crop_by)
+  x.clipped <- sf::st_intersection(x, sf::st_make_valid(crop_by))
   suppressMessages(sf::sf_use_s2(TRUE))
 
   if (is_sp) {
