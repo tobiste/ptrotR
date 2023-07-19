@@ -86,8 +86,12 @@ clip_eulercircles <- function(x, crop_by) {
     )
   }
 
+  # if(!sf::st_is_valid(crop_by)){
+  #   warning("crop_by is not valid")
+  # }
+
   suppressMessages(sf::sf_use_s2(FALSE))
-  x.clipped <- sf::st_intersection(x, sf::st_make_valid(crop_by))
+  x.clipped <- sf::st_intersection(x, crop_by)
   suppressMessages(sf::sf_use_s2(TRUE))
 
   if (is_sp) {
