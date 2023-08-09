@@ -7,7 +7,7 @@
 pole_distribution(x)
 }
 \arguments{
-\item{x}{matrix. containing the coordinates of various positions}
+\item{x}{a `matrix` containing the coordinates of various positions}
 }
 \description{
 Statistics on the distribution of geographic locations

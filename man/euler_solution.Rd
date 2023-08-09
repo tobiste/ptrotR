@@ -7,20 +7,21 @@
 euler_solution(x, sm = TRUE)
 }
 \arguments{
-\item{x}{sf object containing the points for analysis}
+\item{x}{a `sf` object containing the points for analysis}
 
-\item{sm}{logical. Weather x are aligned on a small circle (TRUE) or great circle (FALSE)}
+\item{sm}{logical. Are `x` aligned on a small circle (`TRUE`) or great circle (`FALSE`)?}
 }
 \description{
 Euler pole solution for geological structures
 }
 \examples{
-rmt <- data.frame(
-  rbind(
+# Example from Price & Carmicheal (1986), GEOLOGY:
+rmt <- rbind(
     "yukon" = c(66.1, -147.8),
     "bigbend" = c(52.25, -122.65),
     "washington" = c(47.85, -121.85)
-  )
-) \%>\% sf::st_as_sf(coords = c("X2", "X1"), crs = "WGS84")
+  ) |>
+  as.data.frame()|>
+  sf::st_as_sf(coords = c("V2", "V1"), crs = "WGS84")
 euler_solution(rmt)
 }
