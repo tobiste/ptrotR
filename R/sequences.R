@@ -456,7 +456,7 @@ interpolate_missing_finite_poles <- function(df) {
                   angle = z$angle,
                   plate.fix = fixed,
                   cmt = paste0(
-                    "inteprolated_between_", older.age, "_Ma_and_",
+                    "interpolated_between_", older.age, "_Ma_and_",
                     younger.age, "_Ma"
                   )
                 )
