@@ -6,8 +6,9 @@
 #' @importFrom tectonicr deg2rad rad2deg
 #' @importFrom dplyr mutate summarise
 #' @name best_pole
-#' @source Ramsay, 1967, p. 20-21
+#' @source Ramsay, 1967, p. 18-21
 #' @examples
+#' # example from Ramsay, 1967, p. 20
 #' x <- rbind(
 #'   c(-67, -31, -71),
 #'   c(-62, -53, -50),
@@ -27,18 +28,18 @@ NULL
 best_cone <- function(x) {
   # x <- tectonicr::rad2deg(x)
   x2 <- dplyr::mutate(x,
-      l = tectonicr:::cosd(a),
-      m = tectonicr:::cosd(b),
-      n = tectonicr:::cosd(c),
-      l = ifelse(a < 0, -l, l),
-      m = ifelse(b < 0, -m, m),
-      n = ifelse(c < 0, -n, n),
-      l2 = l^2,
-      m2 = m^2,
-      lm = l * m,
-      ln = l * n,
-      mn = m * n
-    ) |>
+                      l = tectonicr:::cosd(a),
+                      m = tectonicr:::cosd(b),
+                      n = tectonicr:::cosd(c),
+                      l = ifelse(a < 0, -l, l),
+                      m = ifelse(b < 0, -m, m),
+                      n = ifelse(c < 0, -n, n),
+                      l2 = l^2,
+                      m2 = m^2,
+                      lm = l * m,
+                      ln = l * n,
+                      mn = m * n
+  ) |>
     dplyr::summarise(
       sum_l = sum(l),
       sum_m = sum(m),
@@ -51,6 +52,7 @@ best_cone <- function(x) {
     )
   N <- nrow(x2)
 
+  # Rule of Sarrus:
   D <- Da <- Db <- Dc <- matrix(nrow = 3, ncol = 3)
   D[1, 1] <- x2$sum_l2
   D[1, 2] <- D[2, 1] <- x2$sum_lm
@@ -106,23 +108,22 @@ best_cone <- function(x) {
 #' @export
 best_plane <- function(x) {
   x2 <- dplyr::mutate(x,
-    l = tectonicr:::cosd(a),
-    m = tectonicr:::cosd(b),
-    n = tectonicr:::cosd(c),
-    l = ifelse(a < 0, -l, l),
-    m = ifelse(b < 0, -m, m),
-    n = ifelse(c < 0, -n, n),
-    l2 = l^2,
-    m2 = m^2,
-    lm = l * m,
-    ln = l * n,
-    mn = m * n
+                      l = tectonicr:::cosd(a),
+                      m = tectonicr:::cosd(b),
+                      n = tectonicr:::cosd(c),
+                      l = ifelse(a < 0, -l, l),
+                      m = ifelse(b < 0, -m, m),
+                      n = ifelse(c < 0, -n, n),
+                      l2 = l^2,
+                      m2 = m^2,
+                      lm = l * m,
+                      ln = l * n,
+                      mn = m * n
   )
   A <- sum(x2$lm) * sum(x2$mn) - sum(x2$ln) * sum(x2$m2) /
     (sum(x2$l2) * sum(x2$m2) - sum(x2$lm)^2)
   B <- sum(x2$lm) * sum(x2$ln) - sum(x2$mn) * sum(x2$l2) /
     (sum(x2$l2) * sum(x2$m2) - sum(x2$lm)^2)
-  B <- 0.308
   z <- 1 / sqrt((1 + A^2 + B^2))
   gamma <- -acos(z)
   alpha <- -acos(A * z)
@@ -144,7 +145,7 @@ best_plane <- function(x) {
 #'
 #' mean vector, variance and standard deviation
 #'
-#' @param x `data.frame` containing the three dimensions of spherical
+#' @param x `data.frame` containing the three dimensions of stereographic
 #' coordinates of the unit vectors in degree:
 #' \describe{
 #' \item{\code{a}}{angular deviation from x-axis E-W horizontal}
@@ -153,9 +154,11 @@ best_plane <- function(x) {
 #' }
 #' @importFrom tectonicr deg2rad rad2deg
 #' @importFrom dplyr mutate
+#' @source Ramsay, 1967, p. 15-17
 #' @name pole_dist
 #' @examples
-#' x <- rbind(
+#' # example from Ramsay, 1967, p. 17
+#' df <- rbind(
 #'   c(58, 78, 35),
 #'   c(47, 72, 47),
 #'   c(57, 68, 41),
@@ -167,40 +170,34 @@ best_plane <- function(x) {
 #'   c(68, 52, 46),
 #'   c(42, 58, 65)
 #' ) |> as.data.frame()
-#' colnames(x) <- c("a", "b", "c")
-#' mean_pole(x)
-#' var_pole(x)
-#' sd_pole(x)
+#' colnames(df) <- c("a", "b", "c")
+#' mean_pole(df)
+#' var_pole(df)
+#' sd_pole(df)
 NULL
 
 #' @rdname pole_dist
 #' @export
 mean_pole <- function(x) {
-  x2 <- dplyr::mutate(x,
-    a_rad = tectonicr::deg2rad(a),
-    b_rad = tectonicr::deg2rad(b),
-    c_rad = tectonicr::deg2rad(c),
-    cos_a = cos(a_rad),
-    cos_b = cos(b_rad),
-    cos_c = cos(c_rad)
-  )
-  z <- sqrt(sum(x2$cos_a)^2 + sum(x2$cos_b)^2 + sum(x2$cos_c)^2)
-  cos_a <- sum(x2$cos_a) / z
-  cos_b <- sum(x2$cos_b) / z
-  cos_c <- sum(x2$cos_c) / z
+  cos_a <- tectonicr:::cosd(x$a)
+  cos_b <- tectonicr:::cosd(x$b)
+  cos_c <- tectonicr:::cosd(x$c)
 
-  acos(c(a = cos_a, b = cos_b, c = cos_c)) |> tectonicr::rad2deg()
+  z <- sqrt(sum(cos_a)^2 + sum(cos_b)^2 + sum(cos_c)^2)
+  cos_a <- sum(cos_a) / z
+  cos_b <- sum(cos_b) / z
+  cos_c <- sum(cos_c) / z
+
+  tectonicr:::acosd(c(a = cos_a, b = cos_b, c = cos_c))
 }
 #' @rdname pole_dist
 #' @export
 var_pole <- function(x) {
-  x <- dplyr::mutate(x,
-    a = tectonicr::deg2rad(a),
-    b = tectonicr::deg2rad(b),
-    c = tectonicr::deg2rad(c)
-  )
+  cos_a <- tectonicr:::cosd(x$a)
+  cos_b <- tectonicr:::cosd(x$b)
+  cos_c <- tectonicr:::cosd(x$c)
 
-  sum(cos(x$a))^2 + sum(cos(x$b))^2 + sum(cos(x$c))^2
+  sum(cos_a)^2 + sum(cos_b)^2 + sum(cos_c)^2
 }
 #' @rdname pole_dist
 #' @export
@@ -211,9 +208,10 @@ sd_pole <- function(x) {
 
 #' Spherical coordinate conversion
 #'
-#' @param x matrix
+#' @param x matrix of  coordinates
 #' @name ramsay_coords
 #' @examples
+#' Stereographic coordinates (angle notation):
 #' x <- rbind(
 #'   c(58, 78, 35),
 #'   c(47, 72, 47),
@@ -226,13 +224,13 @@ sd_pole <- function(x) {
 #'   c(68, 52, 46),
 #'   c(42, 58, 65)
 #' )
-#' spherical_to_cartesian(x)
-#' spherical_to_geographical(x)
-#' cartesian_to_spherical(spherical_to_cartesian(x))
+#' acoscartesian_to_cartesian(x)
+#' acoscartesian_to_geographical(x)
+#' acoscartesian_to_cartesian(x) |> cartesian_to_acoscartesian()
 NULL
 
 #' @rdname ramsay_coords
-cartesian_to_spherical <- function(x) {
+cartesian_to_acoscartesian <- function(x) {
   a <- acos(x[, 1])
   b <- acos(x[, 2])
   c <- acos(x[, 3])
@@ -241,7 +239,7 @@ cartesian_to_spherical <- function(x) {
 }
 
 #' @rdname ramsay_coords
-spherical_to_cartesian <- function(x) {
+acoscartesian_to_cartesian <- function(x) {
   x <- tectonicr::deg2rad(x)
   cx <- cos(x[, 1])
   cy <- cos(x[, 2])
@@ -269,25 +267,25 @@ cartesian_to_geographical2 <- function(x) {
 }
 
 #' @rdname ramsay_coords
-geographical_to_spherical <- function(x) {
-  cartesian_to_spherical(
+geographical_to_acoscartesian <- function(x) {
+  cartesian_to_acoscartesian(
     geographical_to_cartesian2(x)
   )
 }
 
 #' @rdname ramsay_coords
-spherical_to_geographical <- function(x) {
+acoscartesian_to_geographical <- function(x) {
   cartesian_to_geographical2(
-    spherical_to_cartesian(x)
+    acoscartesian_to_cartesian(x)
   )
 }
 
 
 ep_from_sc <- function(x) {
-  x_sph <- geographical_to_spherical(x)
+  x_sph <- geographical_to_acoscartesian(x)
   res <- best_cone(as.data.frame(x_sph))
 
-  coords <- spherical_to_geographical(t(as.matrix(res)))
+  coords <- acoscartesian_to_geographical(t(as.matrix(res)))
   names(coords) <- c("lat", "lon")
   angle <- res[4]
   names(angle) <- ("angle")
@@ -296,9 +294,9 @@ ep_from_sc <- function(x) {
 }
 
 ep_from_gc <- function(x) {
-  x_sph <- geographical_to_spherical(x)
+  x_sph <- geographical_to_acoscartesian(x)
   res <- best_plane(as.data.frame(x_sph))
-  coords <- spherical_to_geographical(t(as.matrix(res)))
+  coords <- acoscartesian_to_geographical(t(as.matrix(res)))
   names(coords) <- c("lat", "lon")
   R <- res[4]
   c(coords, R)
@@ -306,23 +304,35 @@ ep_from_gc <- function(x) {
 
 #' Euler pole solution for geological structures
 #'
-#' @param x a `sf` object containing the points for analysis
-#' @param sm logical. Are `x` aligned on a small circle (`TRUE`) or great circle (`FALSE`)?
+#' find the best Euler pole solution for a set of geographic locations that
+#' are aligned along a geological structure.
+#'
+#' @inheritParams to_geomat
+#' @param sm logical. Are points `x` aligned on a small circle (`TRUE`) or great circle (`FALSE`)?
 #' @importFrom sf st_coordinates
+#' @return three-element vector given the latitude, longitude, and apical
+#' angle of the best fit Euler pole.
 #' @export
 #' @examples
 #' # Example from Price & Carmicheal (1986), GEOLOGY:
-#' rmt <- rbind(
-#'     "yukon" = c(66.1, -147.8),
-#'     "bigbend" = c(52.25, -122.65),
-#'     "washington" = c(47.85, -121.85)
-#'   ) |>
-#'   as.data.frame()|>
-#'   sf::st_as_sf(coords = c("V2", "V1"), crs = "WGS84")
-#' euler_solution(rmt)
+#'
+#' # from matrix
+#' rmt_mat <- rbind(
+#'   "yukon" = c(66.1, -147.8),
+#'   "bigbend" = c(52.25, -122.65),
+#'   "washington" = c(47.85, -121.85)
+#' )
+#' # from data.frame
+#' euler_solution(rmt_mat)
+#'
+#' rmt_df <- data.frame("lat" = rmt_mat[, 1], "lon" = rmt_mat[, 2])
+#' euler_solution(rmt_df)
+#'
+#' # from sf object
+#' rmt_sf <- sf::st_as_sf(rmt_df, coords = c("lon", "lat"), crs = "WGS84")
+#' euler_solution(rmt_sf)
 euler_solution <- function(x, sm = TRUE) {
-  x_coords <- sf::st_coordinates(x)
-  x_coords <- cbind(x_coords[, 2], x_coords[, 1]) # switch columns
+  x_coords <- to_geomat(x)
 
   if (sm) {
     ep_from_sc(x_coords)
@@ -336,17 +346,44 @@ euler_solution <- function(x, sm = TRUE) {
 #'
 #' Statistics on the distribution of geographic locations
 #'
-#' @param x a `matrix` containing the coordinates of various positions
+#' @inheritParams to_geomat
+#' @return three-element vector giving the mean geographic location, variance, and standard deviation
 #' @export
-pole_distribution <- function(x) {
-  x_sph <- geographical_to_spherical(x)
+geo_distribution <- function(x) {
+  x_coords <- to_geomat(x)
+
+  x_sph <- geographical_to_acoscartesian(x_coords)
   meanpole <- mean_pole(as.data.frame(x_sph))
-  coords <- spherical_to_geographical(t(as.matrix(meanpole)))
+  coords <- acoscartesian_to_geographical(t(as.matrix(meanpole)))
   names(coords) <- c("lat", "lon")
 
   varpole <- var_pole(as.data.frame(x_sph))
   sdpole <- sd_pole(as.data.frame(x_sph))
   c(coords, var = varpole, sd = sdpole)
+}
+
+
+
+#' Convert object to geographic coordinate matrix
+#'
+#' @param x a `matrix` or `data.frame` containing the geographical coordinates,
+#' or a `sf` object
+#'
+#' @return matrix
+to_geomat <- function(x){
+  is.sf <- inherits(x, "sf")
+  is.df <- is.data.frame(x)
+  is.mat <- is.matrix(x)
+  stopifnot(any(is.sf, is.df, is.mat))
+
+  if(is.sf){
+    x_coords <- sf::st_coordinates(x)
+    cbind(x_coords[, 2], x_coords[, 1]) # switch columns
+  } else if(is.df){
+    cbind(x$lat, x$lon) # switch columns
+  } else {
+    x
+  }
 }
 
 #

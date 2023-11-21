@@ -6,7 +6,7 @@
 \alias{best_plane}
 \title{The cone or plane best fit of conically or cylindrical disposed s-plane poles}
 \source{
-Ramsay, 1967, p. 20-21
+Ramsay, 1967, p. 18-21
 }
 \usage{
 best_cone(x)
@@ -14,7 +14,7 @@ best_cone(x)
 best_plane(x)
 }
 \arguments{
-\item{x}{`data.frame` containing the three dimensions of spherical
+\item{x}{`data.frame` containing the three dimensions of stereographic
 coordinates of the unit vectors in degree:
 \describe{
 \item{\code{a}}{angular deviation from x-axis E-W horizontal}
@@ -27,6 +27,7 @@ Finding the best fit pole of rotation for a given set of points that are
 assumed to lie on a mutual small or great circle circle
 }
 \examples{
+# example from Ramsay, 1967, p. 20
 x <- rbind(
   c(-67, -31, -71),
   c(-62, -53, -50),

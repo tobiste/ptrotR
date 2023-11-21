@@ -6,6 +6,9 @@
 \alias{var_pole}
 \alias{sd_pole}
 \title{Unimodal pole distribution}
+\source{
+Ramsay, 1967, p. 15-17
+}
 \usage{
 mean_pole(x)
 
@@ -14,7 +17,7 @@ var_pole(x)
 sd_pole(x)
 }
 \arguments{
-\item{x}{`data.frame` containing the three dimensions of spherical
+\item{x}{`data.frame` containing the three dimensions of stereographic
 coordinates of the unit vectors in degree:
 \describe{
 \item{\code{a}}{angular deviation from x-axis E-W horizontal}
@@ -26,7 +29,8 @@ coordinates of the unit vectors in degree:
 mean vector, variance and standard deviation
 }
 \examples{
-x <- rbind(
+# example from Ramsay, 1967, p. 17
+df <- rbind(
   c(58, 78, 35),
   c(47, 72, 47),
   c(57, 68, 41),
@@ -38,8 +42,8 @@ x <- rbind(
   c(68, 52, 46),
   c(42, 58, 65)
 ) |> as.data.frame()
-colnames(x) <- c("a", "b", "c")
-mean_pole(x)
-var_pole(x)
-sd_pole(x)
+colnames(df) <- c("a", "b", "c")
+mean_pole(df)
+var_pole(df)
+sd_pole(df)
 }

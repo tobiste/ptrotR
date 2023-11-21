@@ -2,33 +2,34 @@
 % Please edit documentation in R/ramsay.R
 \name{ramsay_coords}
 \alias{ramsay_coords}
-\alias{cartesian_to_spherical}
-\alias{spherical_to_cartesian}
+\alias{cartesian_to_acoscartesian}
+\alias{acoscartesian_to_cartesian}
 \alias{geographical_to_cartesian2}
 \alias{cartesian_to_geographical2}
-\alias{geographical_to_spherical}
-\alias{spherical_to_geographical}
+\alias{geographical_to_acoscartesian}
+\alias{acoscartesian_to_geographical}
 \title{Spherical coordinate conversion}
 \usage{
-cartesian_to_spherical(x)
+cartesian_to_acoscartesian(x)
 
-spherical_to_cartesian(x)
+acoscartesian_to_cartesian(x)
 
 geographical_to_cartesian2(x)
 
 cartesian_to_geographical2(x)
 
-geographical_to_spherical(x)
+geographical_to_acoscartesian(x)
 
-spherical_to_geographical(x)
+acoscartesian_to_geographical(x)
 }
 \arguments{
-\item{x}{matrix}
+\item{x}{matrix of  coordinates}
 }
 \description{
 Spherical coordinate conversion
 }
 \examples{
+Stereographic coordinates (angle notation):
 x <- rbind(
   c(58, 78, 35),
   c(47, 72, 47),
@@ -41,7 +42,7 @@ x <- rbind(
   c(68, 52, 46),
   c(42, 58, 65)
 )
-spherical_to_cartesian(x)
-spherical_to_geographical(x)
-cartesian_to_spherical(spherical_to_cartesian(x))
+acoscartesian_to_cartesian(x)
+acoscartesian_to_geographical(x)
+acoscartesian_to_cartesian(x) |> cartesian_to_acoscartesian()
 }

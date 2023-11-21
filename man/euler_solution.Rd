@@ -7,21 +7,35 @@
 euler_solution(x, sm = TRUE)
 }
 \arguments{
-\item{x}{a `sf` object containing the points for analysis}
+\item{x}{a `matrix` or `data.frame` containing the geographical coordinates,
+or a `sf` object}
 
-\item{sm}{logical. Are `x` aligned on a small circle (`TRUE`) or great circle (`FALSE`)?}
+\item{sm}{logical. Are points `x` aligned on a small circle (`TRUE`) or great circle (`FALSE`)?}
+}
+\value{
+three-element vector given the latitude, longitude, and apical
+angle of the best fit Euler pole.
 }
 \description{
-Euler pole solution for geological structures
+find the best Euler pole solution for a set of geographic locations that
+are aligned along a geological structure.
 }
 \examples{
 # Example from Price & Carmicheal (1986), GEOLOGY:
-rmt <- rbind(
-    "yukon" = c(66.1, -147.8),
-    "bigbend" = c(52.25, -122.65),
-    "washington" = c(47.85, -121.85)
-  ) |>
-  as.data.frame()|>
-  sf::st_as_sf(coords = c("V2", "V1"), crs = "WGS84")
-euler_solution(rmt)
+
+# from matrix
+rmt_mat <- rbind(
+  "yukon" = c(66.1, -147.8),
+  "bigbend" = c(52.25, -122.65),
+  "washington" = c(47.85, -121.85)
+)
+# from data.frame
+euler_solution(rmt_mat)
+
+rmt_df <- data.frame("lat" = rmt_mat[, 1], "lon" = rmt_mat[, 2])
+euler_solution(rmt_df)
+
+# from sf object
+rmt_sf <- sf::st_as_sf(rmt_df, coords = c("lon", "lat"), crs = "WGS84")
+euler_solution(rmt_sf)
 }
