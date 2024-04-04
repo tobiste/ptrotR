@@ -43,7 +43,7 @@ Extract stage rotations for a specific plate:
 stage_pols <- extract_stage_rotations(pangea, plate = 137)
 ```
 
-Create a grid of plate motion vectors:
+Create a grid of plate motion vectors for a specific stage pole (here first in `stage_pols`):
 ```
 vectors <- plate_motion_grid(stage_pols[1,])
 
