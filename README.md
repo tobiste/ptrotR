@@ -4,10 +4,10 @@
 
 # ptrotR: **P**late **T**ectonic **Rot**ations in **R**
 **ptrotR** is a free and open-source **R** package for analyzing and reconstructing plate motion. It provides:
-- import of GPLATES *.rot files
-- interpolate total reconstruction poles between time steps
-- rotation of plate polygon (for quick visualization)
-- extraction of relative plate motion parameters from sequence of total reconstruction poles
+- import of GPLATES *.rot files: `read.gplates()`
+- interpolate total reconstruction poles between time steps: `finite_pole_interpolation()`
+- extraction of relative plate motion parameters from sequence of total reconstruction poles: `extract_stage_rotations()`
+- a grid of plate motion vectors (incl. azimuth, distance to Euler pole, and absolute velocity): `plate_motion_grid()`
 
 ## Prerequisites
 
