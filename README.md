@@ -3,7 +3,10 @@
 <!-- badges: end -->
 
 # ptrotR
-**ptrotR** is a free and open-source **R** package for analysing and reconstructing plate motion.
+**ptrotR** is a free and open-source **R** package for analysing and reconstructing plate motion. It provides:
+- import of GPLATES *.rot files
+- interpolate total reconstruction poles between time steps
+- extraction of relative plate motion parameters from sequence of total reconstruction poles
 
 ## Prerequisites
 
@@ -29,3 +32,5 @@ Tobias Stephan
 - <div class="csl-entry">Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. <i>Computers and Geosciences</i>, <i>25</i>(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5</div>
 
 - <div class="csl-entry">Schaeben, H., Kroner, U., &#38; Stephan, T. (2021). Euler Poles of Tectonic Plates. In B. S. Daza Sagar, Q. Cheng, J. McKinley, &#38; F. Agterberg (Eds.), <i>Encyclopedia of Mathematical Geosciences. Encyclopedia of Earth Sciences Series</i> (pp. 1–7). Springer Nature Switzerland AG 2021. https://doi.org/10.1007/978-3-030-26050-7_435-1</div>
+
+- Schaeben, H., Kroner, U., & Stephan, T. (2024). Mathematical fundamentals of spherical kinematics of plate tectonics in terms of quaternions. <i>Mathematical Methods in the Applied Sciences</i>, 47(6), 4469–4496. https://doi.org/10.1002/mma.9823
