@@ -22,6 +22,7 @@ install.packages("remotes")
 The most recent development version  of ptrotR is available from Github and can be installed on your system as follows:
 
 ```
+remotes::install_github('tobiste/euler') % requiered package from my repository
 remotes::install_github('tobiste/ptrotR')
 library('ptrotR')
 ```
