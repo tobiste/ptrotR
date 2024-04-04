@@ -8,3 +8,4 @@
 ^_pkgdown\.yml$     # Configuration info for the package website
 ^README\.Rmd$       # An Rmd file used to generate README.md
 ^data-raw$
+^R/from_rotationR.R

@@ -2,10 +2,11 @@
 [![R-CMD-check](https://github.com/tobiste/PlateTectonicMotionR/workflows/R-CMD-check/badge.svg)](https://github.com/tobiste/PlateTectonicMotionR/actions)
 <!-- badges: end -->
 
-# ptrotR
-**ptrotR** is a free and open-source **R** package for analysing and reconstructing plate motion. It provides:
+# ptrotR: **P**late **T**ectonic **Rot**ations in **R**
+**ptrotR** is a free and open-source **R** package for analyzing and reconstructing plate motion. It provides:
 - import of GPLATES *.rot files
 - interpolate total reconstruction poles between time steps
+- rotation of plate polygon (for quick visualization)
 - extraction of relative plate motion parameters from sequence of total reconstruction poles
 
 ## Prerequisites
@@ -24,6 +25,31 @@ The most recent development version  of ptrotR is available from Github and can 
 remotes::install_github('tobiste/ptrotR')
 library('ptrotR')
 ```
+
+## Example
+
+Import total reconstructions from a GPLATES *.rot file:
+
+```
+fname <- system.file("Pangea.rot", package="ptrotR")
+pangea <- read.gplates(fname)
+print(pangea)
+```
+
+
+Extract stage rotations for a specific plate:
+```
+stage_pols <- extract_stage_rotations(pangea, plate = 137)
+```
+
+Create a grid of plate motion vectors:
+```
+vectors <- plate_motion_grid(stage_pols[1,])
+
+% plot the motion vectors:
+tectonicr::axes(vectors$lon, vectors$lat, vectors$azimuth, add = FALSE)
+```
+
 
 ## Author
 Tobias Stephan

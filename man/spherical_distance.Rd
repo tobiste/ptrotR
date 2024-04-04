@@ -10,17 +10,17 @@
 dist_greatcircle2(
   p1,
   p2,
-  r = earth_radius(),
+  r = tectonicr::earth_radius(),
   method = c("haversine", "haversine2", "vincenty")
 )
 
-dist_loxodrome(p1, p2, r = earth_radius())
+dist_loxodrome(p1, p2, r = tectonicr::earth_radius())
 
 dist_smallcircle(
   p1,
   p2,
   sm,
-  r = earth_radius(),
+  r = tectonicr::earth_radius(),
   method = c("haversine", "haversine2", "vincenty")
 )
 }

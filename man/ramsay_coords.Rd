@@ -29,7 +29,7 @@ acoscartesian_to_geographical(x)
 Spherical coordinate conversion
 }
 \examples{
-Stereographic coordinates (angle notation):
+# Stereographic coordinates (angle notation):
 x <- rbind(
   c(58, 78, 35),
   c(47, 72, 47),

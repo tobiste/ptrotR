@@ -17,7 +17,6 @@
 #' @references Wdowinski, S., 1998, A theory of intraplate
 #'   tectonics. *Journal of Geophysical Research: Solid Earth*, v. 103, p.
 #'   5037-5059, doi: 10.1029/97JB03390.
-#' @importFrom magrittr %>%
 #' @importFrom sf st_coordinates st_as_sf
 #' @name stressstrain
 #' @examples
@@ -36,13 +35,13 @@
 NULL
 
 #' @rdname stressstrain
-displacement_vector <- function(x, ep, tangential = FALSE, positive = TRUE){
-  if(positive) {
+displacement_vector <- function(x, ep, tangential = FALSE, positive = TRUE) {
+  if (positive) {
     u <- abs(ep$angle)
   } else {
     u <- -abs(ep$angle)
   }
-  x.por <- tectonicr::geographical_to_PoR(x, ep) %>%
+  x.por <- tectonicr::geographical_to_PoR(x, ep) |>
     sf::st_coordinates()
 
   lon1 <- min(x.por[, 1])
@@ -52,15 +51,15 @@ displacement_vector <- function(x, ep, tangential = FALSE, positive = TRUE){
   lat2 <- max(x.por[, 2])
 
   u_lat <- u_lon <- c()
-  for(i in 1:length(x.por[, 1])){
-    if(!tangential){
+  for (i in 1:length(x.por[, 1])) {
+    if (!tangential) {
       u_lat[i] <- 0
-      u_lon[i] <- u * tectonicr:::sind(90-x.por[i, 2])^2 * (lon1 - x.por[i, 1])/(lon2-lon1)
+      u_lon[i] <- u * tectonicr:::sind(90 - x.por[i, 2])^2 * (lon1 - x.por[i, 1]) / (lon2 - lon1)
     }
 
-    if(tangential){
+    if (tangential) {
       u_lat[i] <- 0
-      u_lon[i] <- u * tectonicr:::sind(90-x.por[i, 2])^2 * (x.por[i, 2]-lat1)/(lat1-lat2)
+      u_lon[i] <- u * tectonicr:::sind(90 - x.por[i, 2])^2 * (x.por[i, 2] - lat1) / (lat1 - lat2)
     }
   }
 
@@ -72,8 +71,8 @@ displacement_vector <- function(x, ep, tangential = FALSE, positive = TRUE){
 }
 
 #' @rdname stressstrain
-stress_matrix <- function(x, ep, tangential = FALSE, positive = FALSE, v = .25, E = 50){
-  if(positive) {
+stress_matrix <- function(x, ep, tangential = FALSE, positive = FALSE, v = .25, E = 50) {
+  if (positive) {
     u <- abs(ep$angle)
   } else {
     u <- -abs(ep$angle)
@@ -88,18 +87,18 @@ stress_matrix <- function(x, ep, tangential = FALSE, positive = FALSE, v = .25, 
   lat2 <- max(x.por[, 2])
 
   s_xx <- s_xz <- s_zx <- s_zz <- c()
-  if(!tangential){
-    d <- lat2-lat1
+  if (!tangential) {
+    d <- lat2 - lat1
     A <- matrix(data = NA, nrow = 2, ncol = 2)
-    A[1, 1] <- v / (1-v)
+    A[1, 1] <- v / (1 - v)
     A[1, 2] <- 0
     A[2, 2] <- 1
     A[2, 1] <- 0
 
-    Q <-  E / (1 + v) * A
+    Q <- E / (1 + v) * A
 
-    for(i in 1:length(x.por[, 1])){
-      S <- -(u * tectonicr:::sind(90-x.por[i, 2])^2 / d) * Q
+    for (i in 1:length(x.por[, 1])) {
+      S <- -(u * tectonicr:::sind(90 - x.por[i, 2])^2 / d) * Q
 
       s_xx[i] <- S[1, 1]
       s_xz[i] <- S[1, 2]
@@ -108,8 +107,8 @@ stress_matrix <- function(x, ep, tangential = FALSE, positive = FALSE, v = .25, 
     }
   }
 
-  if(tangential){
-    d <- lon2-lon1
+  if (tangential) {
+    d <- lon2 - lon1
     A <- matrix(data = NA, nrow = 2, ncol = 2)
     A[1, 1] <- 0
     A[1, 2] <- 1
@@ -118,8 +117,8 @@ stress_matrix <- function(x, ep, tangential = FALSE, positive = FALSE, v = .25, 
 
     Q <- E / (1 + v) * A
 
-    for(i in 1:length(x.por[, 1])){
-      S <- -(u * tectonicr:::sind(90-x.por[i, 2])^2 / 2*d) * Q
+    for (i in 1:length(x.por[, 1])) {
+      S <- -(u * tectonicr:::sind(90 - x.por[i, 2])^2 / 2 * d) * Q
 
       s_xx[i] <- S[1, 1]
       s_xz[i] <- S[1, 2]
@@ -129,9 +128,8 @@ stress_matrix <- function(x, ep, tangential = FALSE, positive = FALSE, v = .25, 
   }
 
   sf::st_as_sf(
-    x = data.frame(x.por, s_xx,  s_xz, s_zx,  s_zz),
+    x = data.frame(x.por, s_xx, s_xz, s_zx, s_zz),
     coords = c(1, 2),
     crs = tectonicr:::PoR_crs(ep)
   )
 }
-

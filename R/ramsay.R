@@ -28,17 +28,17 @@ NULL
 best_cone <- function(x) {
   # x <- tectonicr::rad2deg(x)
   x2 <- dplyr::mutate(x,
-                      l = tectonicr:::cosd(a),
-                      m = tectonicr:::cosd(b),
-                      n = tectonicr:::cosd(c),
-                      l = ifelse(a < 0, -l, l),
-                      m = ifelse(b < 0, -m, m),
-                      n = ifelse(c < 0, -n, n),
-                      l2 = l^2,
-                      m2 = m^2,
-                      lm = l * m,
-                      ln = l * n,
-                      mn = m * n
+    l = tectonicr:::cosd(a),
+    m = tectonicr:::cosd(b),
+    n = tectonicr:::cosd(c),
+    l = ifelse(a < 0, -l, l),
+    m = ifelse(b < 0, -m, m),
+    n = ifelse(c < 0, -n, n),
+    l2 = l^2,
+    m2 = m^2,
+    lm = l * m,
+    ln = l * n,
+    mn = m * n
   ) |>
     dplyr::summarise(
       sum_l = sum(l),
@@ -108,17 +108,17 @@ best_cone <- function(x) {
 #' @export
 best_plane <- function(x) {
   x2 <- dplyr::mutate(x,
-                      l = tectonicr:::cosd(a),
-                      m = tectonicr:::cosd(b),
-                      n = tectonicr:::cosd(c),
-                      l = ifelse(a < 0, -l, l),
-                      m = ifelse(b < 0, -m, m),
-                      n = ifelse(c < 0, -n, n),
-                      l2 = l^2,
-                      m2 = m^2,
-                      lm = l * m,
-                      ln = l * n,
-                      mn = m * n
+    l = tectonicr:::cosd(a),
+    m = tectonicr:::cosd(b),
+    n = tectonicr:::cosd(c),
+    l = ifelse(a < 0, -l, l),
+    m = ifelse(b < 0, -m, m),
+    n = ifelse(c < 0, -n, n),
+    l2 = l^2,
+    m2 = m^2,
+    lm = l * m,
+    ln = l * n,
+    mn = m * n
   )
   A <- sum(x2$lm) * sum(x2$mn) - sum(x2$ln) * sum(x2$m2) /
     (sum(x2$l2) * sum(x2$m2) - sum(x2$lm)^2)
@@ -211,7 +211,7 @@ sd_pole <- function(x) {
 #' @param x matrix of  coordinates
 #' @name ramsay_coords
 #' @examples
-#' Stereographic coordinates (angle notation):
+#' # Stereographic coordinates (angle notation):
 #' x <- rbind(
 #'   c(58, 78, 35),
 #'   c(47, 72, 47),
@@ -370,29 +370,18 @@ geo_distribution <- function(x) {
 #' or a `sf` object
 #'
 #' @return matrix
-to_geomat <- function(x){
+to_geomat <- function(x) {
   is.sf <- inherits(x, "sf")
   is.df <- is.data.frame(x)
   is.mat <- is.matrix(x)
   stopifnot(any(is.sf, is.df, is.mat))
 
-  if(is.sf){
+  if (is.sf) {
     x_coords <- sf::st_coordinates(x)
     cbind(x_coords[, 2], x_coords[, 1]) # switch columns
-  } else if(is.df){
+  } else if (is.df) {
     cbind(x$lat, x$lon) # switch columns
   } else {
     x
   }
 }
-
-#
-# library(ggplot2)
-#
-# rmt.res <- euler_solution(rmt)
-# ep <- data.frame(lat = rmt.res[1], lon = rmt.res[2])
-#
-# ggplot()+
-#   geom_sf(data = rmt) +
-#   geom_sf(data = tectonicr::eulerpole_smallcircles(ep, 50)) +
-#   coord_sf(xlim = c(sf::st_bbox(rmt)[1], sf::st_bbox(rmt)[3]), ylim = c(sf::st_bbox(rmt)[2], sf::st_bbox(rmt)[4]))

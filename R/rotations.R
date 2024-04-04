@@ -28,7 +28,7 @@ antipodal_euler_pole <- function(x) {
 euler_rotation <- function(ep, x) {
   x.rot <-
     tectonicr::cartesian_to_geographical(
-      euler::euler_matrix(ep %>% eulerpole_2_eulervec()) %*% tectonicr::geographical_to_cartesian(x)
+      euler::euler_matrix(ep |> eulerpole_2_eulervec()) %*% tectonicr::geographical_to_cartesian(x)
     )
   return(x.rot)
 }
@@ -46,16 +46,6 @@ euler_rotation <- function(ep, x) {
 rotation <- function(x, n) {
   c(euler::rotation_matrix(n) %*% x)
 }
-
-
-#
-# hav <- function(x){
-#   sin(x/2)^2
-# }
-#
-# ahav <- function(x){
-#   2 * asin(sqrt(x))
-# }
 
 #' Angle along great circle on spherical surface
 #'
@@ -94,7 +84,7 @@ orthodrome_haversine2_2 <- function(p1, p2) {
   havdlat <- tectonicr:::hav(b[1] - a[1])
 
   tectonicr:::ahav(
-    havdlat + (1 - havdlat - hav(b[1] + a[1])) * hav(b[2] - a[2])
+    havdlat + (1 - havdlat - tectonicr:::hav(b[1] + a[1])) * tectonicr:::hav(b[2] - a[2])
   )
 }
 
@@ -144,6 +134,7 @@ orthodrome_vincenty2 <- function(p1, p2) {
 #' calculation of distance and direction between ringing and finding place.
 #' Vogelwarte 26: 336-346.
 #' @name spherical_distance
+#' @importFrom tectonicr earth_radius
 #' @examples
 #' berlin <- c(52.52, 13.41)
 #' calgary <- c(51.04, -114.072)
@@ -154,7 +145,7 @@ NULL
 
 #' @rdname spherical_distance
 #' @export
-dist_greatcircle2 <- function(p1, p2, r = earth_radius(), method = c("haversine", "haversine2", "vincenty")) {
+dist_greatcircle2 <- function(p1, p2, r = tectonicr::earth_radius(), method = c("haversine", "haversine2", "vincenty")) {
   method <- match.arg(method)
   stopifnot(is.numeric(r))
 
@@ -172,7 +163,7 @@ dist_greatcircle2 <- function(p1, p2, r = earth_radius(), method = c("haversine"
 
 #' @rdname spherical_distance
 #' @export
-dist_loxodrome <- function(p1, p2, r = earth_radius()) {
+dist_loxodrome <- function(p1, p2, r = tectonicr::earth_radius()) {
   stopifnot(is.numeric(r))
 
   p1 <- p1 * pi / 180
@@ -194,9 +185,9 @@ dist_loxodrome <- function(p1, p2, r = earth_radius()) {
 
 #' @rdname spherical_distance
 #' @export
-dist_smallcircle <- function(p1, p2, sm, r = earth_radius(), method = c("haversine", "haversine2", "vincenty")) {
+dist_smallcircle <- function(p1, p2, sm, r = tectonicr::earth_radius(), method = c("haversine", "haversine2", "vincenty")) {
   stopifnot(is.numeric(r))
-  dist_greatcircle2(p1, p2, r, method) * tectonicr::sind(sm) # sind(sm) == cosd(90-sm)
+  dist_greatcircle2(p1, p2, r, method) * tectonicr:::sind(sm) # sind(sm) == cosd(90-sm)
 }
 
 #' @title Great-circle distance distance
@@ -246,7 +237,7 @@ gc_dist <- function(lat1, lon1, lat2, lon2) {
 misfit_euler_from_azimuths <- function(lat, lon, azi, ep_lat, ep_lon) {
   data <- data.frame(lat, lon, azi)
   ep <- tectonicr::euler_pole(ep_lat, ep_lon, geo = TRUE)
-  tazi <- tectonicr::model_shmax(data, ep) %>% pull(sc)
+  tazi <- tectonicr::model_shmax(data, ep) |> dplyr::pull(sc)
 
   sum(
     mapply(
@@ -264,13 +255,15 @@ misfit_euler_from_azimuths <- function(lat, lon, azi, ep_lat, ep_lon) {
 #' @param v spreading rate measured along a perpendicular to the crest of the ridge
 #' @param lat,lon,azi Latitude, longitude and azimuth of the small-circle structures (e.g. fracture zones along the crest of the sea-floor ridges), numeric in degrees
 #' @param ep_lat,ep_lon estimated position of the Euler pole for relative plate motion, numeric in degrees
+#' @importFrom dplyr pull
+#' @importFrom tectonicr euler_pole model_shmax
 #' @references Le Pichon, X. (1968), Sea-floor spreading and continental drift, J. Geophys. Res., 73( 12), 3661-3697, doi:10.1029/JB073i012p03661.
 misfit_euler_from_rates <- function(lat, lon, azi, v, ep_lat, ep_lon) {
   # estimated euler pole
   ep <- tectonicr::euler_pole(ep_lat, ep_lon, geo = TRUE)
 
   # theoretical azimuths at e
-  tazi <- tectonicr::model_shmax(data, ep) %>% pull(sc)
+  tazi <- tectonicr::model_shmax(data, ep) |> pull(sc)
 
   p <- cbind(lat = lat, lon = lon, azi = azi, tazi = tazi) * pi / 180
   e <- c(lat = ep_lat, lon = ep_lon) * pi / 180
@@ -288,7 +281,7 @@ misfit_euler_from_rates <- function(lat, lon, azi, v, ep_lat, ep_lon) {
 
   mapply(
     FUN = function(v, vmax, azi, tazi, sprn) {
-      (v / (vmax * tectonicr::cosd(azi - tazi)) - sprn)^2
+      (v / (vmax * tectonicr:::cosd(azi - tazi)) - sprn)^2
     },
     v = v,
     azi = p[, "azi"],
@@ -342,13 +335,13 @@ perpendicular_velocities <- function(lat, lon, strike, ep_lat, ep_lon, vmax) {
 }
 
 # Atlantis fracture zone
-f1_lat = 31
-f1_lon = -48
-f2_lat = 29
-f2_lon = -37
-length = 1000
+f1_lat <- 31
+f1_lon <- -48
+f2_lat <- 29
+f2_lon <- -37
+length <- 1000
 
-misfit_euler_from_line <- function(f1_lat, f1_lon, f2_lat, f2_lon, length, ep_lat, ep_lon, treshold=5){
+misfit_euler_from_line <- function(f1_lat, f1_lon, f2_lat, f2_lon, length, ep_lat, ep_lon, treshold = 5) {
   f1 <- c(lat = f1_lat, lon = f1_lon) * pi / 180
   f2 <- c(lat = f2_lat, lon = f2_lon) * pi / 180
   e <- c(lat = ep_lat, lon = ep_lon) * pi / 180
@@ -367,6 +360,5 @@ misfit_euler_from_line <- function(f1_lat, f1_lon, f2_lat, f2_lon, length, ep_la
     lon2 = e["lon"]
   )
 
-  c(theta1, theta2, theta1-theta2)
+  c(theta1, theta2, theta1 - theta2)
 }
-

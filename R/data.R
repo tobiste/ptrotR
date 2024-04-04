@@ -10,7 +10,7 @@
 #' @examples
 #' data(pangea)
 #' head(pangea)
-'pangea'
+"pangea"
 
 #' @title Example rotation file
 #' @description Sequence of total reconstruction rotations in GPLATES' .rot format
@@ -24,7 +24,7 @@
 #' @examples
 #' data(pannotia)
 #' head(pannotia)
-'pannotia'
+"pannotia"
 
 
 #' Plate Boundaries of the Earth

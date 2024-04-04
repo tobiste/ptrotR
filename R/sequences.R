@@ -15,9 +15,10 @@
 #' @details The comment column (last column) must not include **white space**. Use "_" to separate words instead.
 #' @seealso \code{\link{check.finite}}
 #' @importFrom utils read.table
+#' @importFrom dplyr select
 #' @export
 #' @examples
-#' fname <- system.file("Pangea.rot", package="ptrotR")
+#' fname <- system.file("Pangea.rot", package = "ptrotR")
 #' Pangea <- read.gplates(fname)
 #' print(Pangea)
 read.gplates <- function(x, ...) {
@@ -32,11 +33,11 @@ read.gplates <- function(x, ...) {
 }
 
 write.gplates <- function(x, file, ...) {
-  x %>%
-    mutate(comment_sign = "!", rel_sign = "-") %>%
-    select(
+  x |>
+    mutate(comment_sign = "!", rel_sign = "-") |>
+    dplyr::select(
       plate.rot, age, lat, lon, angle, plate.fix, comment_sign, Name_and_Description.rot, rel_sign, Name_and_Description.fix, comment
-    ) %>%
+    ) |>
     readr::write_delim(
       file = file,
       delim = " ",
@@ -63,23 +64,23 @@ write.gplates <- function(x, file, ...) {
 #' @examples
 #' data(pangea)
 #' check.finite(pangea)
-check.finite <- function(x){
-  if(!('plate.fix' %in% colnames(x))){
+check.finite <- function(x) {
+  if (!("plate.fix" %in% colnames(x))) {
     stop("column 'plate.fix'is missing")
   }
-  if(!('plate.rot' %in% colnames(x))){
+  if (!("plate.rot" %in% colnames(x))) {
     stop("column 'plate.rot' is missing")
   }
-  if(!('angle' %in% colnames(x))){
+  if (!("angle" %in% colnames(x))) {
     stop("column 'angle' is missing")
   }
-  if(!('lat' %in% colnames(x))){
+  if (!("lat" %in% colnames(x))) {
     stop("column 'lat' is missing")
   }
-  if(!('lon' %in% colnames(x))){
+  if (!("lon" %in% colnames(x))) {
     stop("column 'lon' is missing")
   }
-  if(!('age' %in% colnames(x))){
+  if (!("age" %in% colnames(x))) {
     stop("column 'age' is missing")
   }
   return(TRUE)
@@ -103,27 +104,27 @@ check.finite <- function(x){
 #' @export
 #' @examples
 #' data(pangea)
-#' check.stage(extract_stage_rotations(pangea, plate=103))
-check.stage <- function(x){
-  if(!('plate.fix' %in% colnames(x))){
+#' check.stage(extract_stage_rotations(pangea, plate = 103))
+check.stage <- function(x) {
+  if (!("plate.fix" %in% colnames(x))) {
     stop("column 'plate.fix'is missing")
   }
-  if(!('plate.rot' %in% colnames(x))){
+  if (!("plate.rot" %in% colnames(x))) {
     stop("column 'plate.rot' is missing")
   }
-  if(!('angle' %in% colnames(x))){
+  if (!("angle" %in% colnames(x))) {
     stop("column 'angle' is missing")
   }
-  if(!('lat' %in% colnames(x))){
+  if (!("lat" %in% colnames(x))) {
     stop("column 'lat' is missing")
   }
-  if(!('lon' %in% colnames(x))){
+  if (!("lon" %in% colnames(x))) {
     stop("column 'lon' is missing")
   }
-  if(!('max.age' %in% colnames(x))){
+  if (!("max.age" %in% colnames(x))) {
     stop("column 'max.age' is missing")
   }
-  if(!('min.age' %in% colnames(x))){
+  if (!("min.age" %in% colnames(x))) {
     stop("column 'min.age' is missing")
   }
   return(TRUE)
@@ -137,10 +138,10 @@ check.stage <- function(x){
 #' @importFrom tectonicr longitude_modulo
 #' @export
 #' @examples
-#' euler.pole <- data.frame(plate.rot = c("A", "B"), lat=c(27, -21), lon=c(17, -151), angle=c(0.4, 0.42), plate.fix = "C")
+#' euler.pole <- data.frame(plate.rot = c("A", "B"), lat = c(27, -21), lon = c(17, -151), angle = c(0.4, 0.42), plate.fix = "C")
 #' antipodal_rotation(euler.pole)
 antipodal_rotation <- function(x) {
-  for(i in seq_along(x$lat)) {
+  for (i in seq_along(x$lat)) {
     x$lat[i] <- -x$lat[i]
     x$lon[i] <- tectonicr::longitude_modulo(x$lon[i] + 180)
     x$angle[i] <- -x$angle[i]
@@ -159,7 +160,7 @@ antipodal_rotation <- function(x) {
 #' @examples
 #' x <- data.frame(plate.rot = "A", lat = 10, lon = -70, angle = 20, plate.fix = "B")
 #' inverse_rotation(x)
-inverse_rotation <- function(x){
+inverse_rotation <- function(x) {
   x.rev <- x
   x.rev$plate.rot <- x$plate.fix
   x.rev$plate.fix <- x$plate.rot
@@ -168,14 +169,16 @@ inverse_rotation <- function(x){
 }
 
 
-eulerpole_2_eulervec <- function(x){
-  v <- c(x$x, x$y, x$z,
-         x$angle)
+eulerpole_2_eulervec <- function(x) {
+  v <- c(
+    x$x, x$y, x$z,
+    x$angle
+  )
   class(v) <- append(class(v), "euler")
   return(v)
 }
 
-inv_euler <- function(x){
+inv_euler <- function(x) {
   x[4] <- -x[4]
   return(x)
 }
@@ -210,8 +213,8 @@ extract_stage_rotation_matrix <- function(a1, a2) {
 #' @seealso \code{\link{extract_stage_rotations}}, \code{\link{extract_stage_rotation_matrix}}
 #' @examples
 #' x <- data.frame(plate.rot = 101, age = c(400, 530), lat = c(72.72, 68.3319), lon = c(150, 11.5198), angle = c(25.59, -31.9464), plate.fix = 301)
-#' extract_stage_rotation(x[1,], x[2, ])
-extract_stage_rotation <- function(r1, r2){
+#' extract_stage_rotation(x[1, ], x[2, ])
+extract_stage_rotation <- function(r1, r2) {
   r01 <- euler::to_euler(c(r1$lat, r1$lon, r1$angle))
   r02 <- euler::to_euler(c(r2$lat, r2$lon, r2$angle))
   euler::relative_euler_schaeben2(r01, r02) # R12 = R02 * (R01)^-1
@@ -228,19 +231,24 @@ extract_stage_rotation <- function(r1, r2){
 #' @references Greiner, B. (1999). Euler rotations in plate-tectonic reconstructions. Computers and Geosciences, 25(3), 209–216. https://doi.org/10.1016/S0098-3004(98)00160-5
 #' @export
 #' @seealso \code{\link{extract_stage_rotation}}, \code{\link{check.finite}}, \code{\link{check.stage}}
+#' @importFrom dplyr select
 #' @examples
 #' data(pangea)
-#' extract_stage_rotations(pangea, plate=137)
+#' extract_stage_rotations(pangea, plate = 137)
 extract_stage_rotations <- function(x, plate) {
   check.finite(x)
 
   data <- subset(x, x$plate.rot == plate)
   age.list <- unique(data$age)
   for (time in 2:length(age.list)) {
-    rot.i <- subset(data, data$age == age.list[time - 1]) %>% select(lat, lon, angle) %>% unique()
-    rot.j <- subset(data, data$age == age.list[time]) %>% select(lat, lon, angle) %>% unique()
+    rot.i <- subset(data, data$age == age.list[time - 1]) |>
+      dplyr::select(lat, lon, angle) |>
+      unique()
+    rot.j <- subset(data, data$age == age.list[time]) |>
+      dplyr::select(lat, lon, angle) |>
+      unique()
     ep.ij <- extract_stage_rotation(rot.i, rot.j)
-    if(is.nan(ep.ij$axis[1])){
+    if (is.nan(ep.ij$axis[1])) {
       ep.ij$axis <- c(90, 0)
       ep.ij$angle <- 0
     }
@@ -278,7 +286,7 @@ extract_stage_rotations <- function(x, plate) {
 #' @param x data.frame. Sequence of total
 #' reconstruction rotations
 #' @return data.frame. Sequence of total reconstruction rotations
-#' @details x must ba all equivalent total rotations.
+#' @details x must be all equivalent total rotations.
 #' @importFrom dplyr first
 #' @export
 #' @seealso \code{\link{check.finite}}, \code{\link{check.stage}}
@@ -317,28 +325,28 @@ find_missing_rotations <- function(x) {
 #' @param x data.frame. Sequence of total reconstruction rotations
 #' @return data.frame
 #' @export
-#' @importFrom plyr rbind.fill
+#' @importFrom dplyr bind_rows
 #' @examples
 #' data(pangea)
 #' add_last_finite_rotations(pangea)
-add_last_finite_rotations <- function(x){
+add_last_finite_rotations <- function(x) {
   t <- max(x$age)
-  for(id in x$plate.rot){ # loop through all plates
+  for (id in x$plate.rot) { # loop through all plates
     x.id <- subset(x, x$plate.rot == id)
-    if(max(x.id$age) != t){
-        x.id.oldest1 <- subset(x.id, x.id$age==max(x.id$age))
-        x.id.oldest2 <- data.frame(
-          plate.rot = x.id.oldest1$plate.rot,
-          age = t,
-          lat = x.id.oldest1$lat,
-          lon = x.id.oldest1$lon,
-          angle = x.id.oldest1$angle,
-          plate.fix = x.id.oldest1$plate.fix,
-          cmt = 'added_oldest_finite_rotation'
-        )
-        x <- plyr::rbind.fill(x, x.id.oldest2)
-      }
+    if (max(x.id$age) != t) {
+      x.id.oldest1 <- subset(x.id, x.id$age == max(x.id$age))
+      x.id.oldest2 <- data.frame(
+        plate.rot = x.id.oldest1$plate.rot,
+        age = t,
+        lat = x.id.oldest1$lat,
+        lon = x.id.oldest1$lon,
+        angle = x.id.oldest1$angle,
+        plate.fix = x.id.oldest1$plate.fix,
+        cmt = "added_oldest_finite_rotation"
+      )
+      x <- dplyr::bind_rows(x, x.id.oldest2)
     }
+  }
   return(x)
 }
 
@@ -350,7 +358,7 @@ add_last_finite_rotations <- function(x){
 #' reconstruction rotations
 #' @return data.frame. Sequence of total
 #' reconstruction rotations with filled gaps
-#' @importFrom plyr rbind.fill
+#' @importFrom dplyr bind_rows arrange
 #' @export
 #' @seealso \code{\link{check.finite}}, \code{\link{check.stage}}
 #' @examples
@@ -360,7 +368,7 @@ interpolate_missing_finite_poles <- function(df) {
   check.finite(df)
   df <- add_last_finite_rotations(df)
   missing.df <- find_missing_rotations(df)
-  missing.df <- missing.df[order(missing.df$plate.rot, missing.df$age),]
+  missing.df <- missing.df |> dplyr::arrange(plate.rot, age)
 
   missing.rot <- data.frame(
     plate.rot = as.character(),
@@ -372,7 +380,7 @@ interpolate_missing_finite_poles <- function(df) {
     cmt = as.character()
   )
 
-  df <- df[order(df$plate.rot, df$age),]
+  df <- df |> dplyr::arange(plate.rot, age)
 
   for (id in unique(missing.df$plate.rot)) { # loop through all plates
     x <- subset(missing.df, missing.df$plate.rot == id)
@@ -381,7 +389,7 @@ interpolate_missing_finite_poles <- function(df) {
       if (x$missing[i]) {
         missing.age <- x$age[i]
 
-        if(missing.age==0){
+        if (missing.age == 0) {
           fixed <- subset(df, df$plate.rot == id)
           missing.rot <- rbind(
             missing.rot,
@@ -392,15 +400,14 @@ interpolate_missing_finite_poles <- function(df) {
               lon = 0,
               angle = 0,
               plate.fix = unique(fixed$plate.fix),
-              cmt = 'added_present-day'
+              cmt = "added_present-day"
             )
           )
-          df <- unique(plyr::rbind.fill(df, missing.rot)) # add new rotation to rot file
+          df <- unique(dplyr::bind_rows(df, missing.rot)) # add new rotation to rot file
           x$missing[i] <- FALSE # add tell that the rotation is not missing anymore
-
         } else {
           older.age <- subset(x, x$age > missing.age & !x$missing)
-          # x %>% dplyr::filter(age > missing.age & missing == F)
+          # x |> dplyr::filter(age > missing.age & missing == F)
           suppressWarnings({
             older.age <- min(older.age$age)
           })
@@ -408,14 +415,14 @@ interpolate_missing_finite_poles <- function(df) {
 
           if (!is.infinite(older.age)) {
             younger.age <- subset(x, x$age < missing.age & !x$missing)
-            # younger.age <- x %>% dplyr::filter(age < missing.age & missing == F)
+            # younger.age <- x |> dplyr::filter(age < missing.age & missing == F)
             younger.age <- max(younger.age$age)
 
             fixed <- subset(df, df$plate.rot == id)
             fixed <- unique(fixed$plate.fix)
 
-            # df.young <- df %>% dplyr::filter(plate.rot==id, age == younger.age)
-            # df.old <- df %>% dplyr::filter(plate.rot==id, age == older.age)
+            # df.young <- df |> dplyr::filter(plate.rot==id, age == younger.age)
+            # df.old <- df |> dplyr::filter(plate.rot==id, age == older.age)
             df.young <- subset(df, df$plate.rot == id & df$age == younger.age)
             df.old <- subset(df, df$plate.rot == id & df$age == older.age)
 
@@ -435,10 +442,8 @@ interpolate_missing_finite_poles <- function(df) {
                   )
                 )
               )
-              df <- unique(plyr::rbind.fill(df, missing.rot)) # add new rotation to rot file
+              df <- unique(dplyr::bind_rows(df, missing.rot)) # add new rotation to rot file
               x$missing[i] <- FALSE # add tell that the rotation is not missing anymore
-
-
             } else {
               z <- finite_pole_interpolation(
                 df.young,
@@ -461,9 +466,8 @@ interpolate_missing_finite_poles <- function(df) {
                   )
                 )
               )
-              df <- unique(plyr::rbind.fill(df, missing.rot)) # add new rotation to rot file
+              df <- unique(dplyr::bind_rows(df, missing.rot)) # add new rotation to rot file
               x$missing[i] <- FALSE # add tell that the rotation is not missing anymore
-
             }
           }
         }
@@ -493,7 +497,7 @@ interpolate_missing_finite_poles <- function(df) {
 #' finite_pole_interpolation(x[1, ], x[2, ], 430)
 #' all.equal(finite_pole_interpolation(x[1, ], x[2, ], 430), finite_pole_interpolation(x[2, ], x[1, ], 430)) # mixing up the inputs doesn't matter!
 #'
-#' y = data.frame(plate.rot = 101, age = c(0, 10), lat = c(90, 0), lon = c(0, 0), angle = c(1, 2), plate.fix = 301)
+#' y <- data.frame(plate.rot = 101, age = c(0, 10), lat = c(90, 0), lon = c(0, 0), angle = c(1, 2), plate.fix = 301)
 #' finite_pole_interpolation(y[1, ], y[2, ], 9)
 finite_pole_interpolation <- function(rot1, rot2, tx) {
   check.finite(rot1)
@@ -532,14 +536,14 @@ finite_pole_interpolation <- function(rot1, rot2, tx) {
 
   # rotation from t=1 to t=tx
   ROT_t1x <- euler::to_euler(c(
-          rot12$axis[1],
-          rot12$axis[2],
-          rot12$angle / (rot2$age - rot1$age) * (tx - rot1$age)
-          ))
+    rot12$axis[1],
+    rot12$axis[2],
+    rot12$angle / (rot2$age - rot1$age) * (tx - rot1$age)
+  ))
 
   # interjacent finite rotation is rotation composition of rot1 and stage rotation rot12
   euler::euler_concatenation(ROT_t01, inv_euler(ROT_t1x)) # (R1x)^-1 * R01
-  }
+}
 
 
 #' @title Equivalent rotations of different reference system
@@ -548,15 +552,15 @@ finite_pole_interpolation <- function(rot1, rot2, tx) {
 #' @param x sequence of plate rotations. An object of \code{"data.frame"}, \code{"tibble"}, or \code{"matrix"}
 #' @param fixed ID of fixed plate. Must be same object class as x
 #' @return sequence of plate rotations. Same object class as x
-#' @importFrom dplyr %>% mutate
+#' @importFrom dplyr mutate
 #' @importFrom tectonicr equivalent_rotation
 #' @export
 #' @seealso \code{\link{check.finite}}, \code{\link{check.stage}}
 #' @examples
 #' data(pangea)
-#' equivalent_rotations(pangea, fixed=103)
+#' equivalent_rotations(pangea, fixed = 103)
 equivalent_rotations <- function(x, fixed) {
-  if(missing(fixed)){
+  if (missing(fixed)) {
     stop('Argument "fixed" is missing')
   }
 
@@ -568,7 +572,7 @@ equivalent_rotations <- function(x, fixed) {
   for (i in v) {
     x.age <- subset(x.compl, x.compl$age == i)
     if (nrow(x.age) > 1) {
-      x.age.eq <- tectonicr::equivalent_rotation(x.age, fixed) %>%
+      x.age.eq <- tectonicr::equivalent_rotation(x.age, fixed) |>
         dplyr::mutate(age = i, cmt = paste0(x.age$cmt, "_+_transformed"))
       x.eq <- rbind(x.eq, x.age.eq)
     }
@@ -581,11 +585,11 @@ equivalent_rotations <- function(x, fixed) {
 #' @description Calculates the velocity and magnitude of a migrating Euler pole from a sequence of stage rotations
 #' @param x data.frame. Sequence of stage rotations
 #' @return data.frame
-#' @importFrom dplyr "%>%" first mutate lag group_by
+#' @importFrom dplyr first mutate lag group_by
 #' @export
 #' @examples
 #' data(pangea)
-#' stages <- extract_stage_rotations(pangea, plate=103)
+#' stages <- extract_stage_rotations(pangea, plate = 103)
 #' eulerpole_migration(stages)
 eulerpole_migration <- function(x) {
   plate.rot <- ep.migration.vel <- min.age <- NULL
@@ -603,12 +607,14 @@ eulerpole_migration <- function(x) {
       } else {
         ep.jump.p1 <-
           greatcircle_distance(c(df.p$lat[i], df.p$lon[i]), c(df.p$lat[i + 1], df.p$lon[i +
-                                                                                1]))
+            1]))
         antipodal <-
           antipodal_euler_pole(c(df.p$lat[i + 1], df.p$lon[i + 1]))
         ep.jump.p2 <-
-          greatcircle_distance(c(df.p$lat[i], df.p$lon[i]),
-                     c(antipodal[1], antipodal[2]))
+          greatcircle_distance(
+            c(df.p$lat[i], df.p$lon[i]),
+            c(antipodal[1], antipodal[2])
+          )
         df.p$ep.migration[i] <-
           ifelse(ep.jump.p1 <= ep.jump.p2, ep.jump.p1, ep.jump.p2)
         df.p$ep.migration.vel[i] <- df.p$ep.migration[i] / t[i]
@@ -619,8 +625,8 @@ eulerpole_migration <- function(x) {
     } else {
       data2 <- rbind(data2, df.p)
     }
-    data2 <- data2 %>%
-      dplyr::group_by(plate.rot) %>%
+    data2 <- data2 |>
+      dplyr::group_by(plate.rot) |>
       dplyr::mutate(ep.migration.dvel = ep.migration.vel - dplyr::lag(
         ep.migration.vel,
         default = dplyr::first(ep.migration.vel),
@@ -631,10 +637,10 @@ eulerpole_migration <- function(x) {
 }
 
 migration_path <- function(x) {
-  x.sf <- x %>%
-    mutate(x = lon, y = lat) %>%
-    arrange(N_hemisphere, min.age) %>%
-    st_as_sf(coords = c("x", "y"), agr = "constant", crs = "WGS84")
+  x.sf <- x |>
+    dplyr::mutate(x = lon, y = lat) |>
+    dplyr::arrange(N_hemisphere, min.age) |>
+    sd::st_as_sf(coords = c("x", "y"), agr = "constant", crs = "WGS84")
 
   age.list <- unique(x.sf$min.age)
 
@@ -675,7 +681,7 @@ migration_path <- function(x) {
   }
 
   # migration path 2
-  x.sf.2 <- x.sf %>% filter(min.age == x.sf.1$min.age, N_hemisphere!=x.sf.1$N_hemisphere)
+  x.sf.2 <- x.sf |> filter(min.age == x.sf.1$min.age, N_hemisphere != x.sf.1$N_hemisphere)
 
   x.sf.2n <- filter(x.sf, min.age == age.list[2], N_hemisphere)
   x.sf.2s <- filter(x.sf, min.age == age.list[2], !N_hemisphere)
@@ -712,11 +718,12 @@ migration_path <- function(x) {
 
 
   rbind(
-    x2 %>% mutate(group=1),
-    x3 %>% mutate(group=2)) %>%
-    group_by(group) %>%
-    summarise(do_union = FALSE) %>%
-    # sf::st_combine() %>%
+    x2 |> mutate(group = 1),
+    x3 |> mutate(group = 2)
+  ) |>
+    group_by(group) |>
+    summarise(do_union = FALSE) |>
+    # sf::st_combine() |>
     st_cast("LINESTRING")
 }
 
@@ -728,18 +735,20 @@ migration_path <- function(x) {
 #' @param lon.lim vector, range of longitudes
 #' @return data.frame
 #' @export
-grid_points <- function(gridsize, lat.lim, lon.lim){
-
+grid_points <- function(gridsize, lat.lim, lon.lim) {
   lats <- seq(min(lat.lim), max(lat.lim), gridsize)
   lons <- seq(min(lon.lim), max(lon.lim), gridsize)
 
-  grid.df <- data.frame("lon" = as.numeric(),
-                        "lat" = as.numeric())
+  grid.df <- data.frame(
+    "lon" = as.numeric(),
+    "lat" = as.numeric()
+  )
 
-  for(i in lons) {
+  for (i in lons) {
     grid.df.i <- data.frame(
       "lat" = lats,
-      "lon" = i)
+      "lon" = i
+    )
     grid.df <- rbind(grid.df, grid.df.i)
   }
   return(grid.df)
@@ -760,25 +769,25 @@ grid_points <- function(gridsize, lat.lim, lon.lim){
 #' data(pangea)
 #' euler <- subset(pangea, pangea$plate.rot == 103 & pangea$age == 250)
 #' plate_motion_grid(euler)
-plate_motion_grid <- function(euler, gridsize = 5, lat.lim = c(-90, 90), lon.lim = c(-180, 180)){
+plate_motion_grid <- function(euler, gridsize = 5, lat.lim = c(-90, 90), lon.lim = c(-180, 180)) {
   grid <- grid_points(gridsize, lat.lim, lon.lim)
-  #r <-  6371.00887714
+  # r <-  6371.00887714
 
-  for(i in 1:nrow(grid)){
+  for (i in 1:nrow(grid)) {
     grid$azimuth[i] <- (
       tectonicr::get_azimuth(
-        c(grid$lat[i], grid$lon[i]),
-        c(euler$lat[1], euler$lon[1])) - 90
-      ) %% 180
+        grid$lat[i], grid$lon[i],
+        euler$lat[1], euler$lon[1]
+      ) - 90
+    ) %% 180
 
     grid$sm[i] <- greatcircle_distance(
       c(grid$lat[i], grid$lon[i]),
       c(euler$lat[1], euler$lon[1])
-      )
+    )
 
-    if(!is.null(euler$angle)){
+    if (!is.null(euler$angle)) {
       grid$velocity.abs[i] <- tectonicr::abs_vel(euler$angle[1], grid$sm[i])
-      #grid$velocity.rel[i] <- pracma::rad2deg(grid$velocity.abs[i] / (r * pracma::sind(grid$sm[i])))
     }
   }
   return(grid)

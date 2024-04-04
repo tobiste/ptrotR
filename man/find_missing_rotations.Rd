@@ -18,7 +18,7 @@ Identifies gaps in a sequence of rotations with
 different reference systems
 }
 \details{
-x must ba all equivalent total rotations.
+x must be all equivalent total rotations.
 }
 \seealso{
 \code{\link{check.finite}}, \code{\link{check.stage}}
